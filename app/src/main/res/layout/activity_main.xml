@@ -19,12 +19,10 @@
         android:layout_width="376dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="9dp"
+        android:background="@drawable/border_background"
         android:elevation="4dp"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background="@drawable/border_background"
-        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/floatingActionButton">
 
@@ -67,64 +65,126 @@
 
     <!-- Bottom Navigation (Example) -->
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="152dp"
-        android:backgroundTint="#4D0051"
-        android:text="View All"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayoutDes"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayoutDes" />
-
     <GridLayout
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
-        android:columnCount="3"
-        android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button">
+        android:columnCount="2"
+    android:padding="16dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Individual Category Items -->
-        <!-- Repeat this layout for each category item -->
+    <!-- Category 1: Mathematics -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
             android:layout_gravity="center"
             android:layout_margin="8dp"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:text="Mathematics"
-                android:textColor="#000000"
-                android:textSize="14sp" />
-        </LinearLayout>
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_mathematics" /> <!-- Replace with actual icon -->
 
-        <!-- Repeat the above LinearLayout block for other categories (e.g., Science, Business, etc.) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Mathematics"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+    </LinearLayout>
 
-    </GridLayout>
+    <!-- Category 2: Physics -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_physics" /> <!-- Replace with actual icon -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Physics"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Category 3: Computer Science -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_computer_science" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Computer Science"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Category 4: Language -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_language" /> <!-- Replace with actual icon -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Language"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</GridLayout>
+
+
+<com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -138,5 +198,37 @@
         app:layout_constraintBottom_toTopOf="@id/linearLayoutDes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="415dp"
+        android:layout_height="96dp"
+        android:layout_marginEnd="4dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.373">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:text="Flashcard Categories"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold" /> <!-- Makes the text bold -->
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#4D0051"
+            android:text="View All"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
