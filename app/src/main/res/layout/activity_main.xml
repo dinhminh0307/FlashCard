@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".MainActivity">
+
+    <!-- Profile Section -->
+
+    <!-- Search Card -->
+
+    <!-- Flashcard Categories -->
+
+    <LinearLayout
+        android:id="@+id/linearLayoutDes"
+        android:layout_width="376dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="9dp"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/border_background"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/floatingActionButton">
+
+        <!-- Search Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Search Flashcards"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <!-- Search Description -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+            android:textColor="#888888"
+            android:textSize="14sp" />
+
+        <!-- Search Input Field -->
+        <EditText
+            android:layout_width="352dp"
+            android:layout_height="71dp"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="8dp"
+            android:hint="Search Here"
+            android:inputType="text"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp" />
+
+    </LinearLayout>
+
+    <!-- View All Button -->
+
+    <!-- Categories Grid -->
+
+    <!-- Floating Action Button (FAB) -->
+
+    <!-- Bottom Navigation (Example) -->
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="152dp"
+        android:backgroundTint="#4D0051"
+        android:text="View All"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
+        app:layout_constraintEnd_toEndOf="@+id/linearLayoutDes"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutDes" />
+
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:columnCount="3"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button">
+
+        <!-- Individual Category Items -->
+        <!-- Repeat this layout for each category item -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Mathematics"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Repeat the above LinearLayout block for other categories (e.g., Science, Business, etc.) -->
+
+    </GridLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="27dp"
+        android:backgroundTint="#4D0051"
+        android:contentDescription="profile"
+        app:layout_constraintBottom_toTopOf="@id/linearLayoutDes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
