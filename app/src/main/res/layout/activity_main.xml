@@ -23,12 +23,14 @@
     <!-- Bottom Navigation (Example) -->
 
 
+    <!-- BottomAppBar with LinearLayout for Home and Profile icons -->
+
     <LinearLayout
         android:id="@+id/linearLayoutDes"
         android:layout_width="376dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/border_background"
         android:elevation="4dp"
         android:orientation="vertical"
@@ -82,6 +84,7 @@
 
         <!-- Category 1: Mathematics -->
         <LinearLayout
+            android:id="@+id/mathGrid"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_rowWeight="1"
@@ -110,6 +113,7 @@
 
         <!-- Category 2: Physics -->
         <LinearLayout
+            android:id="@+id/physicsGrid"
             android:layout_width="148dp"
             android:layout_height="wrap_content"
             android:layout_rowWeight="1"
@@ -138,6 +142,7 @@
 
         <!-- Category 3: Computer Science -->
         <LinearLayout
+            android:id="@+id/csGrid"
             android:layout_width="155dp"
             android:layout_height="wrap_content"
             android:layout_rowWeight="1"
@@ -167,6 +172,7 @@
 
         <!-- Category 4: Language -->
         <LinearLayout
+            android:id="@+id/langGrid"
             android:layout_width="146dp"
             android:layout_height="wrap_content"
             android:layout_rowWeight="1"
@@ -202,24 +208,25 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginBottom="27dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="266dp"
         android:backgroundTint="#4D0051"
         android:contentDescription="profile"
-        app:layout_constraintBottom_toTopOf="@id/linearLayoutDes"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout4"
-        android:layout_width="415dp"
-        android:layout_height="96dp"
+        android:layout_width="407dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="4dp"
+        android:layout_marginBottom="421dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.417">
+        app:layout_constraintTop_toBottomOf="@+id/floatingActionButton"
+        app:layout_constraintVertical_bias="0.488">
 
         <TextView
             android:id="@+id/textView2"
@@ -241,17 +248,16 @@
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
-    <!-- BottomAppBar with LinearLayout for Home and Profile icons -->
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="415dp"
         android:layout_height="100dp"
         android:layout_marginBottom="29dp"
+        android:background="@drawable/border_background"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/border_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gridLayout">
 
