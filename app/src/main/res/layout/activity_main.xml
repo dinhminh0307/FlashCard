@@ -244,8 +244,8 @@
     <!-- BottomAppBar with LinearLayout for Home and Profile icons -->
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="415dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="29dp"
         android:gravity="center"
         android:orientation="horizontal"
