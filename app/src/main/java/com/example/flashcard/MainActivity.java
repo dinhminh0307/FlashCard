@@ -1,5 +1,8 @@
 package com.example.flashcard;
 
+import static android.icu.lang.UProperty.MATH;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridLayout;
@@ -12,7 +15,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.flashcard.controller.CardPageActivity;
+import com.example.flashcard.utils.Constant;
+
 public class MainActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,17 +28,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // call the function in home page
-        navigateToMath();
+        navigateToMath(new Constant().MATH_CONST);
 
     }
 
-    private void navigateToMath() {
+    private void navigateToMath(String category) {
         // get the math grid layout
         LinearLayout math = findViewById(R.id.mathGrid);
         math.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Mathematic clicked", Toast.LENGTH_SHORT).show();
+                // Navigate to MathActivity
+                Intent intent = new Intent(MainActivity.this, CardPageActivity.class);
+                intent.putExtra("category_name", category); // Pass the category name
+                startActivity(intent);
             }
         });
     }

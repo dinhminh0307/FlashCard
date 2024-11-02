@@ -9,41 +9,51 @@
     tools:context=".controller.CardPageActivity">
 
     <!-- Back Button -->
-    <ImageView
-        android:id="@+id/backButton"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="Back" />
 
     <!-- Page Title -->
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="Language Flashcards"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#333"
-        app:layout_constraintStart_toEndOf="@id/backButton"
-        app:layout_constraintTop_toTopOf="@id/backButton" />
 
     <!-- ViewPager2 for flashcards -->
 
     <!-- Progress Indicator and Counter -->
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="136dp"
+        android:layout_marginEnd="15dp"
+        android:contentDescription="Back"
+        android:src="@drawable/ic_back"
+        app:layout_constraintEnd_toStartOf="@+id/titleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="136dp"
+        android:layout_marginEnd="174dp"
+        android:layout_marginBottom="638dp"
+        android:text="Language Flashcards"
+        android:textColor="#333"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/progressLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/backButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/progressLayout"
         android:layout_width="192dp"
-        android:layout_height="93dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleText">
 
         <!-- Progress Text -->
         <TextView
@@ -68,6 +78,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="364dp"
         android:layout_height="221dp"
         android:layout_marginEnd="16dp"
