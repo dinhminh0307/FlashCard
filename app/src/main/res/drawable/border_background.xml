@@ -1,7 +1,23 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFFFFF" /> <!-- Background color of the layout -->
-    <stroke
-        android:width="2dp"
-        android:color="#CCCCCC" /> <!-- Border color and thickness -->
-    <corners android:radius="8dp" /> <!-- Optional: round the corners -->
-</shape>
+<!-- res/drawable/border_shadow_background.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Shadow layer -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#e0e0e0" /> <!-- Shadow color (light gray) -->
+            <corners android:radius="8dp" /> <!-- Rounded corners for shadow -->
+        </shape>
+    </item>
+
+    <!-- Border and background layer -->
+    <item android:top="2dp" android:left="2dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" /> <!-- Background color -->
+            <stroke
+                android:width="2dp"
+                android:color="#CCCCCC" /> <!-- Border color and thickness -->
+            <corners android:radius="8dp" /> <!-- Rounded corners for border -->
+        </shape>
+    </item>
+
+</layer-list>
