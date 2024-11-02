@@ -71,12 +71,14 @@
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="460dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginBottom="184dp"
+        android:layout_marginBottom="59dp"
         android:columnCount="2"
         android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Category 1: Mathematics -->
         <LinearLayout
@@ -237,6 +239,48 @@
             android:backgroundTint="#4D0051"
             android:text="View All"
             android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+    <!-- BottomAppBar with LinearLayout for Home and Profile icons -->
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="29dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/border_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gridLayout">
+
+        <!-- Home Icon -->
+        <ImageView
+            android:id="@+id/home_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:contentDescription="Home"
+            android:padding="4dp"
+            android:src="@drawable/ic_home" />
+
+        <!-- Spacer to position FAB in center -->
+
+        <!-- Profile Icon -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/profile_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:contentDescription="Profile"
+            android:padding="4dp"
+            android:src="@drawable/ic_profile" />
     </LinearLayout>
 
 
