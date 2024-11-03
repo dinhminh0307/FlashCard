@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.flashcard.MainActivity;
 import com.example.flashcard.R;
+import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
 import com.example.flashcard.utils.Constant;
 import com.google.android.material.button.MaterialButton;
@@ -92,8 +93,8 @@ public class CardPageActivity extends AppCompatActivity {
 
     // Generic method to fetch pages for a category
     private void fetchFlashCardPages(String tableName, String titleText) {
-        Toast.makeText(this, tableName, Toast.LENGTH_SHORT).show();
-        List<Map<String, String>> questions = flashCardRepository.getQuestionsAndAnswers(tableName);
+
+        List<FlashCard> questions = flashCardRepository.getQuestionsAndAnswers(tableName);
 
         TextView title = findViewById(R.id.titleText);
         TextView content = findViewById(R.id.content);
@@ -104,8 +105,8 @@ public class CardPageActivity extends AppCompatActivity {
 
 
         if (questions != null && !questions.isEmpty()) {
-            String q = questions.get(0).get(KEY_QUESTION);
-            String a = questions.get(0).get(KEY_ANSWER);
+            String q = questions.get(0).getQuestions();
+            String a = questions.get(0).getQuestions();
 
             content.setText(q != null ? q : "Question not available");
             answer.setText(a != null ? a : "Answer not available");

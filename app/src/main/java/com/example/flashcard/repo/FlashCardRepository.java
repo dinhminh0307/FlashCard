@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.flashcard.models.FlashCard;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,34 +89,34 @@ public class FlashCardRepository extends SQLiteOpenHelper {
     }
 
     // Retrieve all questions and answers from a specified category table
-    public List<Map<String, String>> getQuestionsAndAnswers(String tableName) {
-        List<Map<String, String>> questionsList = new ArrayList<>();
+    public List<FlashCard> getQuestionsAndAnswers(String tableName) {
+        List<FlashCard> flashCards = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
 
         try {
-            String query = "SELECT question_text, answer_text FROM " + tableName;
+            String query = "SELECT question_id, question_text, answer_text FROM " + tableName;
             cursor = db.rawQuery(query, null);
 
-            // Check if columns exist in cursor to prevent getColumnIndex from returning -1
+            int idIndex = cursor.getColumnIndex("question_id");
             int questionIndex = cursor.getColumnIndex("question_text");
             int answerIndex = cursor.getColumnIndex("answer_text");
 
-            // If either index is -1, the column does not exist in the result set
-            if (questionIndex == -1 || answerIndex == -1) {
-                throw new IllegalArgumentException("Columns 'question_text' or 'answer_text' not found in table " + tableName);
+            // If any index is -1, the column does not exist in the result set
+            if (idIndex == -1 || questionIndex == -1 || answerIndex == -1) {
+                throw new IllegalArgumentException("One or more columns not found in table " + tableName);
             }
 
             // Populate the list if columns are found
             if (cursor.moveToFirst()) {
                 do {
+                    String id = cursor.getString(idIndex);
                     String question = cursor.getString(questionIndex);
                     String answer = cursor.getString(answerIndex);
 
-                    Map<String, String> questionAnswerMap = new HashMap<>();
-                    questionAnswerMap.put("question", question);
-                    questionAnswerMap.put("answer", answer);
-                    questionsList.add(questionAnswerMap);
+                    // Create FlashCard object with id, question, and answer
+                    FlashCard flashCard = new FlashCard(id, question, answer);
+                    flashCards.add(flashCard);
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -124,8 +126,9 @@ public class FlashCardRepository extends SQLiteOpenHelper {
             db.close();
         }
 
-        return questionsList;
+        return flashCards;
     }
+
 
 
 }
