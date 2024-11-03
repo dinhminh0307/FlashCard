@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/modalTitle"
+        android:layout_width="152dp"
+        android:layout_height="32dp"
+        android:text="Math Insertion"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/questionInput"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Enter question"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/answerInput"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Enter answer"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="#6200EA"
+        android:padding="10dp"
+        android:text="SAVE"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="154dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="#6200EA"
+        android:padding="10dp"
+        android:text="CANCEL"
+        android:textColor="#FFFFFF" />
+</LinearLayout>

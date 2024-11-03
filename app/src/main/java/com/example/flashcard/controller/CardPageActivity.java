@@ -12,10 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.flashcard.MainActivity;
 import com.example.flashcard.R;
+import com.example.flashcard.dialogs.FormDialogFragment;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
 import com.example.flashcard.utils.Constant;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,9 @@ public class CardPageActivity extends AppCompatActivity {
         // Set up return button functionality
         setReturnButton();
 
+        // add question form
+        addQuestion(categoryName);
+
         // Initialize answerLayout
         answerLayout = findViewById(R.id.answerLayout);
 
@@ -56,6 +61,17 @@ public class CardPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 toggleAnswerVisibility();
+            }
+        });
+    }
+
+    private void addQuestion(String tableName) {
+        FloatingActionButton addInButton = findViewById(R.id.fabAdd);
+        addInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FormDialogFragment modal = new FormDialogFragment(tableName);
+                modal.show(getSupportFragmentManager(), "FormDialogFragment");
             }
         });
     }
