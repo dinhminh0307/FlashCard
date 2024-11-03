@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FlashCardRepository extends SQLiteOpenHelper {
     // Database Name and Version
     private static final String DATABASE_NAME = "flashcard.db";
@@ -75,9 +78,33 @@ public class FlashCardRepository extends SQLiteOpenHelper {
     }
 
     // Retrieve all questions from a specified category table
-    public Cursor getQuestions(String tableName) {
+    public List<String> getQuestionsList(String tableName) {
+        List<String> questionsList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM " + tableName;
-        return db.rawQuery(query, null);
+
+        // Check if COLUMN_QUESTION_TEXT is a valid column in the table
+        String query = "SELECT " + COLUMN_QUESTION_TEXT + " FROM " + tableName;
+        Cursor cursor = db.rawQuery(query, null);
+
+        // Verify that the column exists in the Cursor
+        int columnIndex = cursor.getColumnIndex(COLUMN_QUESTION_TEXT);
+        if (columnIndex == -1) {
+            // Log an error if the column is not found
+            throw new IllegalArgumentException("Column '" + COLUMN_QUESTION_TEXT + "' does not exist in table " + tableName);
+        }
+
+        // Iterate over the Cursor and add each question to the list
+        if (cursor.moveToFirst()) {
+            do {
+                String question = cursor.getString(columnIndex);
+                questionsList.add(question);
+            } while (cursor.moveToNext());
+        }
+
+        // Close the Cursor and database
+        cursor.close();
+        db.close();
+
+        return questionsList;
     }
 }
