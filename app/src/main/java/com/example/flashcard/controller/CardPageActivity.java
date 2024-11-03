@@ -53,6 +53,10 @@ public class CardPageActivity extends AppCompatActivity {
         addQuestion(categoryName);
 
         // Initialize answerLayout
+        initAnswerField();
+    }
+
+    private void initAnswerField() {
         answerLayout = findViewById(R.id.answerLayout);
 
         // Set up the expand/collapse button
@@ -122,7 +126,7 @@ public class CardPageActivity extends AppCompatActivity {
 
         if (questions != null && !questions.isEmpty()) {
             String q = questions.get(0).getQuestions();
-            String a = questions.get(0).getQuestions();
+            String a = questions.get(0).getAnswers();
 
             content.setText(q != null ? q : "Question not available");
             answer.setText(a != null ? a : "Answer not available");
