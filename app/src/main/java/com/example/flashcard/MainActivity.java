@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.flashcard.controller.CardPageActivity;
+import com.example.flashcard.exceptions.DuplicateQuestionException;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
 import com.example.flashcard.utils.Constant;
@@ -44,10 +45,17 @@ public class MainActivity extends AppCompatActivity {
         FlashCard languageFlashCard = new FlashCard(null, "What is the synonym of 'happy'?", "Joyful");
 
         // Insert the sample FlashCards into their respective tables
-        flashCardRepository.insertQuestion("math_questions", mathFlashCard);
-        flashCardRepository.insertQuestion("physics_questions", physicsFlashCard);
-        flashCardRepository.insertQuestion("computer_science_questions", csFlashCard);
-        flashCardRepository.insertQuestion("language_questions", languageFlashCard);
+        try {
+            flashCardRepository.insertQuestion("math_questions", mathFlashCard);
+            flashCardRepository.insertQuestion("physics_questions", physicsFlashCard);
+            flashCardRepository.insertQuestion("computer_science_questions", csFlashCard);
+            flashCardRepository.insertQuestion("language_questions", languageFlashCard);
+        } catch (DuplicateQuestionException e) {
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "An error occurred while adding the flashcard", Toast.LENGTH_LONG).show();
+        }
+
 
         // Show a toast message indicating that tables have been initialized and sample data has been added
         Toast.makeText(this, "Tables created and sample data added", Toast.LENGTH_SHORT).show();

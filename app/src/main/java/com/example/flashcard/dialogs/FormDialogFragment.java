@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.flashcard.R;
+import com.example.flashcard.exceptions.DuplicateQuestionException;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
 
@@ -54,10 +55,15 @@ public class FormDialogFragment extends DialogFragment {
             if (TextUtils.isEmpty(question) || TextUtils.isEmpty(answer)) {
                 Toast.makeText(getContext(), "Please enter both question and answer", Toast.LENGTH_SHORT).show();
             } else {
-                // Save to database
-                flashCardRepository.insertQuestion(tableName, card);
-                Toast.makeText(getContext(), "Flashcard saved", Toast.LENGTH_SHORT).show();
-                dismiss(); // Close the dialog after saving
+                try {
+                    // Attempt to save the FlashCard to the database
+                    flashCardRepository.insertQuestion(tableName, card);
+                    Toast.makeText(getContext(), "Flashcard saved", Toast.LENGTH_SHORT).show();
+                    dismiss(); // Close the dialog after saving
+                } catch (DuplicateQuestionException e) {
+                    // Display a toast indicating the question already exists
+                    Toast.makeText(getContext(), "This question already exists.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
