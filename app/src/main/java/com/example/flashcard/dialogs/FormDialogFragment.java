@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.flashcard.R;
+import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
 
 public class FormDialogFragment extends DialogFragment {
@@ -46,11 +47,15 @@ public class FormDialogFragment extends DialogFragment {
             String question = questionInput.getText().toString().trim();
             String answer = answerInput.getText().toString().trim();
 
+            FlashCard card = new FlashCard();
+            card.setAnswers(answer);
+            card.setQuestions(question);
+
             if (TextUtils.isEmpty(question) || TextUtils.isEmpty(answer)) {
                 Toast.makeText(getContext(), "Please enter both question and answer", Toast.LENGTH_SHORT).show();
             } else {
                 // Save to database
-                flashCardRepository.insertQuestion(tableName, question, answer);
+                flashCardRepository.insertQuestion(tableName, card);
                 Toast.makeText(getContext(), "Flashcard saved", Toast.LENGTH_SHORT).show();
                 dismiss(); // Close the dialog after saving
             }

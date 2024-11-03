@@ -79,11 +79,11 @@ public class FlashCardRepository extends SQLiteOpenHelper {
     }
 
     // Insert question and answer into the specified category table
-    public void insertQuestion(String tableName, String questionText, String answerText) {
+    public void insertQuestion(String tableName, FlashCard flashCard) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_QUESTION_TEXT, questionText);
-        values.put(COLUMN_ANSWER_TEXT, answerText); // Insert answer
+        values.put(COLUMN_QUESTION_TEXT, flashCard.getQuestions());
+        values.put(COLUMN_ANSWER_TEXT, flashCard.getAnswers()); // Insert answer
         db.insert(tableName, null, values);
         db.close();
     }
