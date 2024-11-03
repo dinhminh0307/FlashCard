@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,11 +14,19 @@ import com.example.flashcard.MainActivity;
 import com.example.flashcard.R;
 import com.example.flashcard.repo.FlashCardRepository;
 import com.example.flashcard.utils.Constant;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
+import java.util.Map;
 
 public class CardPageActivity extends AppCompatActivity {
     private FlashCardRepository flashCardRepository;
+    private LinearLayout answerLayout;
+    private boolean isAnswerVisible = false;
+
+    // Keys for accessing the map entries
+    private static final String KEY_QUESTION = "question";
+    private static final String KEY_ANSWER = "answer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +45,27 @@ public class CardPageActivity extends AppCompatActivity {
 
         // Set up return button functionality
         setReturnButton();
+
+        // Initialize answerLayout
+        answerLayout = findViewById(R.id.answerLayout);
+
+        // Set up the expand/collapse button
+        MaterialButton expandButton = findViewById(R.id.roundedSquareButton);
+        expandButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleAnswerVisibility();
+            }
+        });
+    }
+
+    // Toggle the visibility of the answer layout
+    private void toggleAnswerVisibility() {
+        answerLayout.setVisibility(isAnswerVisible ? View.GONE : View.VISIBLE);
+        isAnswerVisible = !isAnswerVisible;
     }
 
     private void navigateFlashCardByCategories(String category) {
-        // Make sure category is not null and matches the constants defined
         if (category == null) {
             Toast.makeText(this, "Category is null", Toast.LENGTH_SHORT).show();
             return;
@@ -47,16 +73,16 @@ public class CardPageActivity extends AppCompatActivity {
 
         switch (category) {
             case Constant.MATH_CONST:
-                fetchMathPages();
+                fetchFlashCardPages("math_questions", "Math Flashcard");
                 break;
             case Constant.PHYSICS_CONST:
-                fetchPhysicsPages();
+                fetchFlashCardPages("physics_questions", "Physics Flashcard");
                 break;
             case Constant.COMPUTER_SCIENCE_CONST:
-                fetchComputerSciencePages();
+                fetchFlashCardPages("computer_science_questions", "Computer Science Flashcard");
                 break;
             case Constant.LANGUAGE_CONST:
-                fetchLanguagePages();
+                fetchFlashCardPages("language_questions", "Language Flashcard");
                 break;
             default:
                 Toast.makeText(this, "Invalid category", Toast.LENGTH_SHORT).show();
@@ -64,64 +90,29 @@ public class CardPageActivity extends AppCompatActivity {
         }
     }
 
-    private void fetchMathPages() {
-        List<String> questions = flashCardRepository.getQuestionsList("math_questions"); // Ensure correct table name
-
-        // Set title and display first question if available
-        TextView title = findViewById(R.id.titleText);
-        TextView content = findViewById(R.id.content);
-        title.setText("Math Flashcard");
-
-        if (questions != null && !questions.isEmpty()) {
-            content.setText(questions.get(0));
-        } else {
-            content.setText("No questions available");
-            Toast.makeText(this, "No questions found for Math category", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void fetchPhysicsPages() {
-        List<String> questions = flashCardRepository.getQuestionsList("physics_questions");
+    // Generic method to fetch pages for a category
+    private void fetchFlashCardPages(String tableName, String titleText) {
+        Toast.makeText(this, tableName, Toast.LENGTH_SHORT).show();
+        List<Map<String, String>> questions = flashCardRepository.getQuestionsAndAnswers(tableName);
 
         TextView title = findViewById(R.id.titleText);
         TextView content = findViewById(R.id.content);
-        title.setText("Physics Flashcard");
+
+        TextView answer = findViewById(R.id.answerText);
+
+        title.setText(titleText);
+
 
         if (questions != null && !questions.isEmpty()) {
-            content.setText(questions.get(0));
+            String q = questions.get(0).get(KEY_QUESTION);
+            String a = questions.get(0).get(KEY_ANSWER);
+
+            content.setText(q != null ? q : "Question not available");
+            answer.setText(a != null ? a : "Answer not available");
         } else {
             content.setText("No questions available");
-            Toast.makeText(this, "No questions found for Physics category", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void fetchComputerSciencePages() {
-        List<String> questions = flashCardRepository.getQuestionsList("computer_science_questions");
-
-        TextView title = findViewById(R.id.titleText);
-        TextView content = findViewById(R.id.content);
-        title.setText("Computer Science");
-
-        if (questions != null && !questions.isEmpty()) {
-            content.setText(questions.get(0));
-        } else {
-            content.setText("No questions available");
-            Toast.makeText(this, "No questions found for Computer Science category", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void fetchLanguagePages() {
-        List<String> questions = flashCardRepository.getQuestionsList("language_questions");
-
-        TextView title = findViewById(R.id.titleText);
-        TextView content = findViewById(R.id.content);
-        title.setText("Language Flashcard");
-
-        if (questions != null && !questions.isEmpty()) {
-            content.setText(questions.get(0));
-        } else {
-            content.setText("No questions available");
-            Toast.makeText(this, "No questions found for Language category", Toast.LENGTH_SHORT).show();
+            answer.setText("");
+            Toast.makeText(this, "No questions found for " + titleText, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -130,9 +121,7 @@ public class CardPageActivity extends AppCompatActivity {
         returnBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navigate back to MainActivity
-                Intent intent = new Intent(CardPageActivity.this, MainActivity.class);
-                startActivity(intent);
+                finish(); // End this activity to go back to the previous screen
             }
         });
     }

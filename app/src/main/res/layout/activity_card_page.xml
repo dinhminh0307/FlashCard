@@ -48,15 +48,14 @@
 
     <LinearLayout
         android:id="@+id/progressLayout"
-        android:layout_width="199dp"
-        android:layout_height="114dp"
+        android:layout_width="175dp"
+        android:layout_height="75dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleText"
-        app:layout_constraintVertical_bias="0.602">
+        app:layout_constraintVertical_bias="0.819">
 
         <!-- Progress Text -->
 
@@ -112,6 +111,8 @@
             android:textSize="24sp" />
     </LinearLayout>
 
+    <!-- Answer Layout (Initially Hidden) -->
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
@@ -122,8 +123,61 @@
         app:backgroundTint="#5D3A8D"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/roundedSquareButton"
+        app:layout_constraintVertical_bias="1.0"
         app:tint="#FFFFFF" />
+
+    <LinearLayout
+        android:id="@+id/answerLayout"
+        android:layout_width="364dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/card_border_background"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/fabAdd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout2">
+
+        <TextView
+            android:id="@+id/answerText"
+            android:layout_width="218dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#E0E0E0"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:minWidth="150dp"
+            android:minHeight="100dp"
+            android:padding="16dp"
+            android:text="Answer"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/roundedSquareButton"
+        android:layout_width="60dp"
+        android:layout_height="53dp"
+        android:background="@drawable/rounded_square_background"
+        android:backgroundTint="@null"
+        android:clickable="true"
+        android:contentDescription="Expand Options"
+        android:padding="16dp"
+        app:cornerRadius="16dp"
+        app:icon="@drawable/ic_narrow_down"
+        app:iconTint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.624" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

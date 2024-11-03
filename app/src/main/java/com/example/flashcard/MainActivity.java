@@ -36,15 +36,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeTables() {
-        // Insert sample questions if needed
-        flashCardRepository.insertQuestion("math_questions", "What is 2 + 2?");
-        flashCardRepository.insertQuestion("physics_questions", "What is the speed of light?");
-        flashCardRepository.insertQuestion("computer_science_questions", "What is a binary tree?");
-        flashCardRepository.insertQuestion("language_questions", "What is the synonym of 'happy'?");
+        // Insert sample questions and answers if needed
+        flashCardRepository.insertQuestion("math_questions", "What is 2 + 2?", "4");
+        flashCardRepository.insertQuestion("physics_questions", "What is the speed of light?", "299,792,458 meters per second");
+        flashCardRepository.insertQuestion("computer_science_questions", "What is a binary tree?", "A tree data structure in which each node has at most two children.");
+        flashCardRepository.insertQuestion("language_questions", "What is the synonym of 'happy'?", "Joyful");
 
         // Show a toast message indicating that tables have been initialized and sample data has been added
         Toast.makeText(this, "Tables created and sample data added", Toast.LENGTH_SHORT).show();
     }
+
 
     private void navigateToMath(String category) {
         // Get the math grid layout
