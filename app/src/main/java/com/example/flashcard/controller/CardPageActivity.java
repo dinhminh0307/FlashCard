@@ -14,6 +14,7 @@ import com.example.flashcard.adapters.FlashcardAdapter;
 import com.example.flashcard.dialogs.FormDialogFragment;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
+import com.example.flashcard.services.FlashCardServices;
 import com.example.flashcard.utils.Constant;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,7 +22,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
 
 public class CardPageActivity extends AppCompatActivity implements FormDialogFragment.OnQuestionAddedListener {
-    private FlashCardRepository flashCardRepository;
+//    private FlashCardRepository flashCardRepository;
+    private FlashCardServices flashCardServices;
     private ViewPager2 viewPager;
     private FlashcardAdapter adapter;
     private boolean isAnswerVisible = false;
@@ -34,7 +36,7 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
         setContentView(R.layout.activity_card_page);
 
         try {
-            flashCardRepository = new FlashCardRepository(this);
+            flashCardServices = new FlashCardServices(this);
             viewPager = findViewById(R.id.viewPager);
 
             Intent intent = getIntent();
@@ -103,13 +105,7 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
 
     private void fetchFlashCardPages(String tableName, String titleText) {
         try {
-            List<FlashCard> questions = flashCardRepository.getQuestionsAndAnswers(tableName);
-
-            if (questions == null || questions.isEmpty()) {
-                Toast.makeText(this, "No questions found for " + titleText, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
+            List<FlashCard> questions = flashCardServices.getFlashCardContent(tableName, titleText);
             adapter = new FlashcardAdapter(questions);
             viewPager.setAdapter(adapter);
 

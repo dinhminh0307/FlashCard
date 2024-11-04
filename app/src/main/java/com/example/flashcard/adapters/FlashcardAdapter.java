@@ -39,10 +39,13 @@ public class FlashcardAdapter extends RecyclerView.Adapter<FlashcardAdapter.Flas
     @Override
     public void onBindViewHolder(@NonNull FlashcardViewHolder holder, int position) {
         FlashCard flashCard = flashCards.get(position);
-
-        holder.questionText.setText(flashCard.getQuestions());
-        holder.answerText.setText(flashCard.getAnswers());
-
+        if(flashCard == null || flashCard.getQuestions().isEmpty()) {
+            holder.questionText.setText("Empty Quesntion");
+            holder.answerText.setText("Empty");
+        } else {
+            holder.questionText.setText(flashCard.getQuestions());
+            holder.answerText.setText(flashCard.getAnswers());
+        }
         // Set the visibility of the answer text based on the isAnswerVisible flag
         holder.answerText.setVisibility(isAnswerVisible ? View.VISIBLE : View.GONE);
     }

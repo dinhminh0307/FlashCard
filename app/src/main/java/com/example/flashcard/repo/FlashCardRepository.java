@@ -82,35 +82,33 @@ public class FlashCardRepository extends SQLiteOpenHelper {
     // Insert question and answer into the specified category table
     public void insertQuestion(String tableName, FlashCard flashCard) throws DuplicateQuestionException {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        // Check if the question already exists in the database
-        String query = "SELECT COUNT(*) FROM " + tableName + " WHERE " + COLUMN_QUESTION_TEXT + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{flashCard.getQuestions()});
+        Cursor cursor = null;
 
         try {
+            // Check if the question already exists
+            String query = "SELECT COUNT(*) FROM " + tableName + " WHERE " + COLUMN_QUESTION_TEXT + " = ?";
+            cursor = db.rawQuery(query, new String[]{flashCard.getQuestions()});
+
             if (cursor.moveToFirst() && cursor.getInt(0) > 0) {
-                // Question already exists
+                // Throw the custom exception for a duplicate entry
                 throw new DuplicateQuestionException("Question already exists in the database: " + flashCard.getQuestions());
             }
 
-            // If no duplicate found, insert the question
+            // If no duplicate is found, proceed with insertion
             ContentValues values = new ContentValues();
             values.put(COLUMN_QUESTION_TEXT, flashCard.getQuestions());
             values.put(COLUMN_ANSWER_TEXT, flashCard.getAnswers());
 
             long result = db.insert(tableName, null, values);
             if (result == -1) {
-                throw new Exception("Failed to insert question into table: " + tableName);
+                throw new RuntimeException("Failed to insert question into table: " + tableName);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+            if (cursor != null) cursor.close();
             db.close();
         }
     }
+
 
 
     // Retrieve all questions and answers from a specified category table

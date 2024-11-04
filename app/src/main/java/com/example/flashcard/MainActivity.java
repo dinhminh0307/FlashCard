@@ -13,10 +13,11 @@ import com.example.flashcard.controller.CardPageActivity;
 import com.example.flashcard.exceptions.DuplicateQuestionException;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
+import com.example.flashcard.services.FlashCardServices;
 import com.example.flashcard.utils.Constant;
 
 public class MainActivity extends AppCompatActivity {
-    private FlashCardRepository flashCardRepository;
+    private FlashCardServices flashCardServices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +25,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Initialize the FlashCardRepository
-        flashCardRepository = new FlashCardRepository(this);
+        flashCardServices = new FlashCardServices(this);
 
         // Open the database to ensure tables are created
-        SQLiteDatabase db = flashCardRepository.getWritableDatabase();
-        initializeTables();
+//        SQLiteDatabase db = flashCardRepository.getWritableDatabase();
+        //initializeTables();
 
         // Set up the function to navigate to the Math category
         navigateToMath(Constant.MATH_CONST);
@@ -37,29 +38,29 @@ public class MainActivity extends AppCompatActivity {
         navigateToPhysics(Constant.PHYSICS_CONST);
     }
 
-    private void initializeTables() {
-        // Create sample FlashCard objects
-        FlashCard mathFlashCard = new FlashCard(null, "What is 2 + 2?", "4");
-        FlashCard physicsFlashCard = new FlashCard(null, "What is the speed of light?", "299,792,458 meters per second");
-        FlashCard csFlashCard = new FlashCard(null, "What is a binary tree?", "A tree data structure in which each node has at most two children.");
-        FlashCard languageFlashCard = new FlashCard(null, "What is the synonym of 'happy'?", "Joyful");
-
-        // Insert the sample FlashCards into their respective tables
-        try {
-            flashCardRepository.insertQuestion("math_questions", mathFlashCard);
-            flashCardRepository.insertQuestion("physics_questions", physicsFlashCard);
-            flashCardRepository.insertQuestion("computer_science_questions", csFlashCard);
-            flashCardRepository.insertQuestion("language_questions", languageFlashCard);
-        } catch (DuplicateQuestionException e) {
-            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "An error occurred while adding the flashcard", Toast.LENGTH_LONG).show();
-        }
-
-
-        // Show a toast message indicating that tables have been initialized and sample data has been added
-        Toast.makeText(this, "Tables created and sample data added", Toast.LENGTH_SHORT).show();
-    }
+//    private void initializeTables() {
+//        // Create sample FlashCard objects
+//        FlashCard mathFlashCard = new FlashCard(null, "What is 2 + 2?", "4");
+//        FlashCard physicsFlashCard = new FlashCard(null, "What is the speed of light?", "299,792,458 meters per second");
+//        FlashCard csFlashCard = new FlashCard(null, "What is a binary tree?", "A tree data structure in which each node has at most two children.");
+//        FlashCard languageFlashCard = new FlashCard(null, "What is the synonym of 'happy'?", "Joyful");
+//
+//        // Insert the sample FlashCards into their respective tables
+//        try {
+//            flashCardRepository.insertQuestion("math_questions", mathFlashCard);
+//            flashCardRepository.insertQuestion("physics_questions", physicsFlashCard);
+//            flashCardRepository.insertQuestion("computer_science_questions", csFlashCard);
+//            flashCardRepository.insertQuestion("language_questions", languageFlashCard);
+//        } catch (DuplicateQuestionException e) {
+//            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//        } catch (Exception e) {
+//            Toast.makeText(this, "An error occurred while adding the flashcard", Toast.LENGTH_LONG).show();
+//        }
+//
+//
+//        // Show a toast message indicating that tables have been initialized and sample data has been added
+//        Toast.makeText(this, "Tables created and sample data added", Toast.LENGTH_SHORT).show();
+//    }
 
 
 

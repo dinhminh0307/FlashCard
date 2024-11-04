@@ -19,10 +19,11 @@ import com.example.flashcard.R;
 import com.example.flashcard.exceptions.DuplicateQuestionException;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
+import com.example.flashcard.services.FlashCardServices;
 
 public class FormDialogFragment extends DialogFragment {
 
-    private FlashCardRepository flashCardRepository;
+    private FlashCardServices flashCardServices;
     private String tableName;
     private OnQuestionAddedListener questionAddedListener;
 
@@ -48,7 +49,7 @@ public class FormDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        flashCardRepository = new FlashCardRepository(requireContext());
+        flashCardServices = new FlashCardServices(requireContext());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
@@ -68,19 +69,15 @@ public class FormDialogFragment extends DialogFragment {
             if (TextUtils.isEmpty(question) || TextUtils.isEmpty(answer)) {
                 Toast.makeText(getContext(), "Please enter both question and answer", Toast.LENGTH_SHORT).show();
             } else {
-                FlashCard newCard = new FlashCard();
-                newCard.setQuestions(question);
-                newCard.setAnswers(answer);
-
-                // Save to database and notify listener
                 try {
-                    flashCardRepository.insertQuestion(tableName, newCard);
+                    flashCardServices.addQuestion(question, answer, tableName);
+                    questionAddedListener.onQuestionAdded(); // Notify CardPageActivity if needed
+                    Toast.makeText(getContext(), "Flashcard saved", Toast.LENGTH_SHORT).show();
+                    dismiss(); // Close the dialog after saving
                 } catch (DuplicateQuestionException e) {
-                    throw new RuntimeException(e);
+                    // Display specific error message when duplicate question is found
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                questionAddedListener.onQuestionAdded(); // Notify CardPageActivity
-                Toast.makeText(getContext(), "Flashcard saved", Toast.LENGTH_SHORT).show();
-                dismiss(); // Close the dialog after saving
             }
         });
 

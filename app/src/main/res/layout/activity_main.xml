@@ -27,14 +27,17 @@
 
     <LinearLayout
         android:id="@+id/linearLayoutDes"
-        android:layout_width="376dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
         android:background="@drawable/border_background"
         android:elevation="4dp"
         android:orientation="vertical"
         android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/floatingActionButton">
 
@@ -71,16 +74,15 @@
 
     <GridLayout
         android:id="@+id/gridLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="460dp"
-        android:layout_marginEnd="4dp"
         android:layout_marginBottom="59dp"
         android:columnCount="2"
         android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
 
         <!-- Category 1: Mathematics -->
         <LinearLayout
@@ -209,24 +211,23 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="80dp"
-        android:layout_marginBottom="266dp"
+        android:layout_marginBottom="20dp"
         android:backgroundTint="#4D0051"
         android:contentDescription="profile"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutDes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout4"
-        android:layout_width="407dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="421dp"
+        android:layout_marginBottom="11dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/floatingActionButton"
-        app:layout_constraintVertical_bias="0.488">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutDes">
 
         <TextView
             android:id="@+id/textView2"
@@ -250,9 +251,9 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="415dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="29dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="27dp"
         android:background="@drawable/border_background"
         android:gravity="center"
         android:orientation="horizontal"
