@@ -2,6 +2,7 @@ package com.example.flashcard.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,5 +27,12 @@ public class QuizzActivity extends AppCompatActivity {
         if (categoryName == null) {
             throw new IllegalArgumentException("Category name is null");
         }
+
+        setReturnButton();
+    }
+
+    private void setReturnButton() {
+        ImageView returnBtn = findViewById(R.id.exitButton);
+        returnBtn.setOnClickListener(v -> finish());
     }
 }
