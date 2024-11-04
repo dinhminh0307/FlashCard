@@ -1,6 +1,7 @@
 package com.example.flashcard.dialogs;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,9 +24,25 @@ public class FormDialogFragment extends DialogFragment {
 
     private FlashCardRepository flashCardRepository;
     private String tableName;
+    private OnQuestionAddedListener questionAddedListener;
 
     public FormDialogFragment(String tableName) {
         this.tableName = tableName;
+    }
+
+    public interface OnQuestionAddedListener {
+        void onQuestionAdded();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            // Ensure that the activity implements the listener
+            questionAddedListener = (OnQuestionAddedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnQuestionAddedListener");
+        }
     }
 
     @NonNull
@@ -48,33 +65,29 @@ public class FormDialogFragment extends DialogFragment {
             String question = questionInput.getText().toString().trim();
             String answer = answerInput.getText().toString().trim();
 
-            FlashCard card = new FlashCard();
-            card.setAnswers(answer);
-            card.setQuestions(question);
-
             if (TextUtils.isEmpty(question) || TextUtils.isEmpty(answer)) {
                 Toast.makeText(getContext(), "Please enter both question and answer", Toast.LENGTH_SHORT).show();
             } else {
+                FlashCard newCard = new FlashCard();
+                newCard.setQuestions(question);
+                newCard.setAnswers(answer);
+
+                // Save to database and notify listener
                 try {
-                    // Attempt to save the FlashCard to the database
-                    flashCardRepository.insertQuestion(tableName, card);
-                    Toast.makeText(getContext(), "Flashcard saved", Toast.LENGTH_SHORT).show();
-                    dismiss(); // Close the dialog after saving
+                    flashCardRepository.insertQuestion(tableName, newCard);
                 } catch (DuplicateQuestionException e) {
-                    // Display a toast indicating the question already exists
-                    Toast.makeText(getContext(), "This question already exists.", Toast.LENGTH_LONG).show();
+                    throw new RuntimeException(e);
                 }
+                questionAddedListener.onQuestionAdded(); // Notify CardPageActivity
+                Toast.makeText(getContext(), "Flashcard saved", Toast.LENGTH_SHORT).show();
+                dismiss(); // Close the dialog after saving
             }
         });
 
         // Set click listener for the cancel button
-        cancelButton.setOnClickListener(v -> {
-            dismiss(); // Simply close the dialog without saving
-        });
+        cancelButton.setOnClickListener(v -> dismiss());
 
-        // Set the custom view for the dialog
         builder.setView(view);
-
         return builder.create();
     }
 }

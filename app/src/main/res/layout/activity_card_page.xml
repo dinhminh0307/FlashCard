@@ -9,28 +9,19 @@
     tools:context=".controller.CardPageActivity">
 
     <!-- Back Button -->
-
-    <!-- Page Title -->
-
-    <!-- ViewPager2 for flashcards -->
-
-    <!-- Progress Indicator and Counter -->
-
     <ImageView
         android:id="@+id/backButton"
         android:layout_width="20dp"
         android:layout_height="27dp"
         android:layout_marginStart="50dp"
         android:layout_marginTop="136dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="142dp"
         android:contentDescription="Back"
         android:src="@drawable/ic_back"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toStartOf="@+id/titleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Page Title -->
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
@@ -46,6 +37,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.16" />
 
+    <!-- ViewPager2 for Swiping Flashcards -->
+
+    <!-- Progress Layout -->
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="268dp"
+        android:layout_height="299dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="368dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.596"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backButton"
+        app:layout_constraintVertical_bias="0.344" />
+
     <LinearLayout
         android:id="@+id/progressLayout"
         android:layout_width="175dp"
@@ -57,9 +65,6 @@
         app:layout_constraintTop_toBottomOf="@+id/titleText"
         app:layout_constraintVertical_bias="0.819">
 
-        <!-- Progress Text -->
-
-        <!-- Progress Bar -->
         <TextView
             android:id="@+id/progressText"
             android:layout_width="match_parent"
@@ -80,39 +85,7 @@
             android:progressTint="#8E44AD" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="364dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="368dp"
-        android:background="@drawable/card_border_background"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backButton"
-        app:layout_constraintVertical_bias="0.451">
-
-        <TextView
-            android:id="@+id/content"
-            android:layout_width="218dp"
-            android:layout_height="121dp"
-            android:layout_gravity="center"
-            android:background="#5D3A8D"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:minWidth="150dp"
-            android:minHeight="100dp"
-            android:padding="16dp"
-            android:text="Example"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp" />
-    </LinearLayout>
-
-    <!-- Answer Layout (Initially Hidden) -->
-
+    <!-- Floating Action Button for Adding New Flashcards -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
@@ -125,41 +98,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/roundedSquareButton"
         app:layout_constraintVertical_bias="1.0"
         app:tint="#FFFFFF" />
 
-    <LinearLayout
-        android:id="@+id/answerLayout"
-        android:layout_width="364dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/card_border_background"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/fabAdd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout2">
-
-        <TextView
-            android:id="@+id/answerText"
-            android:layout_width="218dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="#E0E0E0"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:minWidth="150dp"
-            android:minHeight="100dp"
-            android:padding="16dp"
-            android:text="Answer"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="#000000"
-            android:textSize="18sp" />
-    </LinearLayout>
-
+    <!-- Expand Button for Showing Answers -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/roundedSquareButton"
         android:layout_width="60dp"
@@ -178,6 +120,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.624" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

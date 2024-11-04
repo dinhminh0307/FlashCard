@@ -1,17 +1,18 @@
 package com.example.flashcard.controller;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.flashcard.MainActivity;
 import com.example.flashcard.R;
+import com.example.flashcard.controller.FlashcardAdapter;
 import com.example.flashcard.dialogs.FormDialogFragment;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
@@ -20,78 +21,69 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
-import java.util.Map;
 
-public class CardPageActivity extends AppCompatActivity {
+public class CardPageActivity extends AppCompatActivity implements FormDialogFragment.OnQuestionAddedListener {
     private FlashCardRepository flashCardRepository;
-    private LinearLayout answerLayout;
+    private ViewPager2 viewPager;
+    private FlashcardAdapter adapter;
     private boolean isAnswerVisible = false;
 
-    // Keys for accessing the map entries
-    private static final String KEY_QUESTION = "question";
-    private static final String KEY_ANSWER = "answer";
+    private String categoryName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_page);
 
-        // Initialize the repository
-        flashCardRepository = new FlashCardRepository(this);
+        try {
+            flashCardRepository = new FlashCardRepository(this);
+            viewPager = findViewById(R.id.viewPager);
 
-        // Retrieve the category name passed from MainActivity
-        Intent intent = getIntent();
-        String categoryName = intent.getStringExtra("category_name");
+            Intent intent = getIntent();
+            categoryName = intent.getStringExtra("category_name");
 
-        // Navigate to the pages by category
+            if (categoryName == null) {
+                throw new IllegalArgumentException("Category name is null");
+            }
+
+            initAnswerField();
+            navigateFlashCardByCategories(categoryName);
+            setReturnButton();
+            addQuestion(categoryName);
+
+        } catch (Exception e) {
+            Log.e("CardPageActivity", "Error initializing CardPageActivity", e);
+            Toast.makeText(this, "An error occurred: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onQuestionAdded() {
+        // Called when a new question is added, so refresh data
         navigateFlashCardByCategories(categoryName);
-
-        // Set up return button functionality
-        setReturnButton();
-
-        // add question form
-        addQuestion(categoryName);
-
-        // Initialize answerLayout
-        initAnswerField();
     }
 
     private void initAnswerField() {
-        answerLayout = findViewById(R.id.answerLayout);
-
-        // Set up the expand/collapse button
         MaterialButton expandButton = findViewById(R.id.roundedSquareButton);
-        expandButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleAnswerVisibility();
-            }
-        });
+        expandButton.setOnClickListener(v -> toggleAnswerVisibility());
     }
 
     private void addQuestion(String tableName) {
         FloatingActionButton addInButton = findViewById(R.id.fabAdd);
-        addInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FormDialogFragment modal = new FormDialogFragment(tableName);
-                modal.show(getSupportFragmentManager(), "FormDialogFragment");
-            }
+        addInButton.setOnClickListener(v -> {
+            FormDialogFragment modal = new FormDialogFragment(tableName);
+            modal.show(getSupportFragmentManager(), "FormDialogFragment");
         });
     }
 
-    // Toggle the visibility of the answer layout
     private void toggleAnswerVisibility() {
-        answerLayout.setVisibility(isAnswerVisible ? View.GONE : View.VISIBLE);
         isAnswerVisible = !isAnswerVisible;
+        if (adapter != null) {
+            adapter.setAnswerVisibility(isAnswerVisible);
+        }
     }
 
     private void navigateFlashCardByCategories(String category) {
-        if (category == null) {
-            Toast.makeText(this, "Category is null", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         switch (category) {
             case Constant.MATH_CONST:
                 fetchFlashCardPages("math_questions", "Math Flashcard");
@@ -100,7 +92,7 @@ public class CardPageActivity extends AppCompatActivity {
                 fetchFlashCardPages("physics_questions", "Physics Flashcard");
                 break;
             case Constant.COMPUTER_SCIENCE_CONST:
-                fetchFlashCardPages("computer_science_questions", "Computer Science Flashcard");
+                fetchFlashCardPages("computer_science_questions", "Computer Science");
                 break;
             case Constant.LANGUAGE_CONST:
                 fetchFlashCardPages("language_questions", "Language Flashcard");
@@ -111,39 +103,26 @@ public class CardPageActivity extends AppCompatActivity {
         }
     }
 
-    // Generic method to fetch pages for a category
     private void fetchFlashCardPages(String tableName, String titleText) {
+        try {
+            List<FlashCard> questions = flashCardRepository.getQuestionsAndAnswers(tableName);
 
-        List<FlashCard> questions = flashCardRepository.getQuestionsAndAnswers(tableName);
+            if (questions == null || questions.isEmpty()) {
+                Toast.makeText(this, "No questions found for " + titleText, Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        TextView title = findViewById(R.id.titleText);
-        TextView content = findViewById(R.id.content);
+            adapter = new FlashcardAdapter(questions);
+            viewPager.setAdapter(adapter);
 
-        TextView answer = findViewById(R.id.answerText);
-
-        title.setText(titleText);
-
-
-        if (questions != null && !questions.isEmpty()) {
-            String q = questions.get(0).getQuestions();
-            String a = questions.get(0).getAnswers();
-
-            content.setText(q != null ? q : "Question not available");
-            answer.setText(a != null ? a : "Answer not available");
-        } else {
-            content.setText("No questions available");
-            answer.setText("");
-            Toast.makeText(this, "No questions found for " + titleText, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("CardPageActivity", "Error fetching flashcards", e);
+            Toast.makeText(this, "Error loading flashcards", Toast.LENGTH_LONG).show();
         }
     }
 
     private void setReturnButton() {
         ImageView returnBtn = findViewById(R.id.backButton);
-        returnBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // End this activity to go back to the previous screen
-            }
-        });
+        returnBtn.setOnClickListener(v -> finish());
     }
 }

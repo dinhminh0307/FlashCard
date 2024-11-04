@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Sample Question"
+        android:background="@drawable/rounded_square_background"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/answerText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Sample Answer"
+        android:background="@drawable/rounded_square_background"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
+</LinearLayout>
