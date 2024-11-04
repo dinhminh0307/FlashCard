@@ -1,4 +1,4 @@
-package com.example.flashcard.controller;
+package com.example.flashcard.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;

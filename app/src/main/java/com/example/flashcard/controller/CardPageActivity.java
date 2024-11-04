@@ -1,10 +1,8 @@
 package com.example.flashcard.controller;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -12,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.flashcard.R;
-import com.example.flashcard.controller.FlashcardAdapter;
+import com.example.flashcard.adapters.FlashcardAdapter;
 import com.example.flashcard.dialogs.FormDialogFragment;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
