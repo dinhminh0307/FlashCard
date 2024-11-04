@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#FFFFFF">
+
+    <!-- Dialog Title -->
+    <TextView
+        android:id="@+id/modalTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Option"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="12dp" />
+
+    <!-- Quiz Button -->
+    <Button
+        android:id="@+id/quizButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#6200EA"
+        android:text="Quiz"
+        android:textColor="#FFFFFF"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- View Button -->
+    <Button
+        android:id="@+id/viewButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#6200EA"
+        android:text="View"
+        android:textColor="#FFFFFF"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Delete Button -->
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#D32F2F"
+        android:text="Delete"
+        android:textColor="#FFFFFF"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Cancel Button -->
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#9E9E9E"
+        android:text="Cancel"
+        android:textColor="#FFFFFF"
+        android:padding="12dp" />
+
+</LinearLayout>
