@@ -3,8 +3,12 @@ package com.example.flashcard.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +17,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.flashcard.R;
+import com.example.flashcard.exceptions.NoResourceFound;
+import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.services.QuizzServices;
 
 import java.util.ArrayList;
@@ -23,6 +29,8 @@ public class QuizzActivity extends AppCompatActivity {
 
 
     private int questionCursor = 0;
+
+    QuizzServices quizzServices;
 
     private List<String> listOfQuestion = new ArrayList<>();
 
@@ -41,7 +49,7 @@ public class QuizzActivity extends AppCompatActivity {
             throw new IllegalArgumentException("Category name is null");
         }
 
-        QuizzServices quizzServices = new QuizzServices(this);
+        quizzServices = new QuizzServices(this);
 
 //        //get quizz form the database
 
@@ -50,6 +58,7 @@ public class QuizzActivity extends AppCompatActivity {
         listOfQuestion = quizzServices.getQuestions();
 
         fetchTheQuestion();
+        onNextBtn();
         setReturnButton();
     }
 
@@ -61,5 +70,35 @@ public class QuizzActivity extends AppCompatActivity {
     private void setReturnButton() {
         ImageView returnBtn = findViewById(R.id.exitButton);
         returnBtn.setOnClickListener(v -> finish());
+    }
+
+    private void onNextBtn() {
+        Button nextButton = findViewById(R.id.nextBtn);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean ansResult = false;
+                try {
+                    EditText ans = findViewById(R.id.editAnswer);
+                    TextView ques = findViewById(R.id.questionId);
+
+                    FlashCard currAns = new FlashCard();
+                    currAns.setQuestions(ques.getText().toString());
+                    currAns.setAnswers(ans.getText().toString());
+
+                    ansResult = quizzServices.verifyAnswer(currAns);
+                } catch (NoResourceFound e) {
+                    Toast.makeText(QuizzActivity.this, "Question not found", Toast.LENGTH_LONG).show();
+                }
+
+                if (ansResult) {
+                    // Display correct answer feedback
+                    Toast.makeText(QuizzActivity.this, "Correct", Toast.LENGTH_LONG).show();
+                } else if (!ansResult) {
+                    // Display incorrect answer feedback
+                    Toast.makeText(QuizzActivity.this, "Incorrect", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }
