@@ -58,24 +58,49 @@ public class QuizzActivity extends AppCompatActivity {
 
         fetchTheQuestion();
         onNextBtn();
+        onPreviousButton();
         setReturnButton();
+
+        // check the state of the quizz
+
     }
 
     private void fetchTheQuestion() {
+        setTheSubmitState();
         TextView ques = findViewById(R.id.questionId);
         ques.setText(listOfQuestion.get(questionCursor));
     }
 
-    private void moveToNextQuestion() {
-        questionCursor++;
-        Button submitButton = findViewById(R.id.submitBtn) ;
-        if(questionCursor == listOfQuestion.size() && submitButton.getVisibility() == View.GONE) {
+    private void setTheSubmitState() {
+        Button submitButton = findViewById(R.id.submitBtn);
+        Button nextButton = findViewById(R.id.nextBtn);
+        if(questionCursor == listOfQuestion.size() - 1 && submitButton.getVisibility() == View.GONE) {
             // end of the questions and display the submit button
             submitButton.setVisibility(View.VISIBLE);
+            nextButton.setVisibility(View.GONE);
         } else {
             submitButton.setVisibility(View.GONE);
-            fetchTheQuestion();
+            nextButton.setVisibility(View.VISIBLE);
         }
+    }
+    private void moveToNextQuestion() {
+        if(questionCursor < listOfQuestion.size()) {
+            questionCursor++;
+        }
+        fetchTheQuestion();
+    }
+
+    private void onPreviousButton() {
+        Button prev = findViewById(R.id.prevBtn);
+        prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(questionCursor > 0) {
+                    questionCursor--;
+                }
+                fetchTheQuestion();
+            }
+        });
     }
 
     private void setReturnButton() {
@@ -106,10 +131,9 @@ public class QuizzActivity extends AppCompatActivity {
                     // move the cursor to next question
                     moveToNextQuestion();
                     // Display correct answer feedback
-                    Toast.makeText(QuizzActivity.this, "Correct", Toast.LENGTH_LONG).show();
                 } else if (!ansResult) {
                     // Display incorrect answer feedback
-                    Toast.makeText(QuizzActivity.this, "Incorrect", Toast.LENGTH_LONG).show();
+                    Toast.makeText(QuizzActivity.this, "Incorrect", Toast.LENGTH_SHORT).show();
                 }
             }
         });
