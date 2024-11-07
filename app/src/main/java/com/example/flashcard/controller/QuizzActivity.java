@@ -34,6 +34,8 @@ public class QuizzActivity extends AppCompatActivity {
 
     private List<String> listOfQuestion = new ArrayList<>();
 
+
+
     public QuizzActivity() {}
 
     @Override
@@ -51,9 +53,6 @@ public class QuizzActivity extends AppCompatActivity {
 
         quizzServices = new QuizzServices(this);
 
-//        //get quizz form the database
-
-//        Log.println(Log.ASSERT, "Print", categoryName);
         quizzServices.setQuizz(categoryName);
         listOfQuestion = quizzServices.getQuestions();
 
@@ -65,6 +64,18 @@ public class QuizzActivity extends AppCompatActivity {
     private void fetchTheQuestion() {
         TextView ques = findViewById(R.id.questionId);
         ques.setText(listOfQuestion.get(questionCursor));
+    }
+
+    private void moveToNextQuestion() {
+        questionCursor++;
+        Button submitButton = findViewById(R.id.submitBtn) ;
+        if(questionCursor == listOfQuestion.size() && submitButton.getVisibility() == View.GONE) {
+            // end of the questions and display the submit button
+            submitButton.setVisibility(View.VISIBLE);
+        } else {
+            submitButton.setVisibility(View.GONE);
+            fetchTheQuestion();
+        }
     }
 
     private void setReturnButton() {
@@ -92,6 +103,8 @@ public class QuizzActivity extends AppCompatActivity {
                 }
 
                 if (ansResult) {
+                    // move the cursor to next question
+                    moveToNextQuestion();
                     // Display correct answer feedback
                     Toast.makeText(QuizzActivity.this, "Correct", Toast.LENGTH_LONG).show();
                 } else if (!ansResult) {
