@@ -16,6 +16,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.flashcard.R;
 import com.example.flashcard.exceptions.DuplicateQuestionException;
+import com.example.flashcard.exceptions.NoResourceFound;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.services.FlashCardServices;
 
@@ -40,7 +41,7 @@ public class FlashCardEditFragment extends DialogFragment {
     @Override
 
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        // Initialize flashCardServices with the context
+        // Initialize FlashCardServices
         flashCardServices = new FlashCardServices(requireContext());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -58,43 +59,51 @@ public class FlashCardEditFragment extends DialogFragment {
         questionEdit.setText(flashCard.getQuestions());
         answerEdit.setText(flashCard.getAnswers());
 
-        // Set up button actions
+        // Handle Save Button
         saveButton.setOnClickListener(v -> {
             String updatedQuestion = questionEdit.getText().toString().trim();
             String updatedAnswer = answerEdit.getText().toString().trim();
 
-            if(updatedQuestion.equals(flashCard.getQuestions())) {
-                updatedQuestion = "";
-            } else if(updatedAnswer.equals(flashCard.getAnswers())) {
-                updatedAnswer = "";
+            if (updatedQuestion.equals(flashCard.getQuestions())) {
+                updatedQuestion = ""; // Leave question unchanged
             }
-            // Update flashcard data and notify the calling activity if needed
+            if (updatedAnswer.equals(flashCard.getAnswers())) {
+                updatedAnswer = ""; // Leave answer unchanged
+            }
+
             flashCard.setQuestions(updatedQuestion);
             flashCard.setAnswers(updatedAnswer);
-            flashCard.setId(questionId);
 
             try {
+                // Attempt to update the flashcard in the database
                 flashCardServices.updateFlashCard(flashCard, tableName);
-                Toast.makeText(getContext(), "Flashcard updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Flashcard updated successfully", Toast.LENGTH_SHORT).show();
+                dismiss();
             } catch (DuplicateQuestionException e) {
-                Toast.makeText(getContext(), "Duplicate Question", Toast.LENGTH_SHORT).show();
+                // Handle duplicate question error
+                Toast.makeText(getContext(), "Duplicate question found", Toast.LENGTH_SHORT).show();
             }
-
-            // Dismiss the dialog
-            dismiss();
         });
 
+        // Handle Delete Button
         deleteButton.setOnClickListener(v -> {
-            // Implement deletion logic here
-            dismiss();
+            try {
+                // Attempt to delete the flashcard
+                flashCardServices.deleteQuestion(flashCard, tableName);
+                Toast.makeText(getContext(), "Flashcard deleted successfully", Toast.LENGTH_SHORT).show();
+                dismiss();
+            } catch (NoResourceFound e) {
+                // Handle case where the question ID was not found
+                Toast.makeText(getContext(), "Question not found", Toast.LENGTH_SHORT).show();
+            }
         });
 
+        // Handle Cancel Button
         cancelButton.setOnClickListener(v -> dismiss());
 
-        // Set custom view to the dialog
         builder.setView(view);
-
         return builder.create();
     }
+
 
 }

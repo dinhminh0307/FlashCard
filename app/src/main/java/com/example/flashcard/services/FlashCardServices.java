@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.example.flashcard.adapters.FlashcardAdapter;
 import com.example.flashcard.exceptions.DuplicateQuestionException;
+import com.example.flashcard.exceptions.NoResourceFound;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
 
@@ -50,4 +51,9 @@ public class FlashCardServices {
             flashCardRepository.updateAnswerText(tableName, flashCard.getId(), flashCard);
         }
     }
+
+    public void deleteQuestion(FlashCard flashCard, String tableName) throws NoResourceFound {
+        flashCardRepository.deleteQuestionById(tableName, flashCard.getId());
+    }
+
 }

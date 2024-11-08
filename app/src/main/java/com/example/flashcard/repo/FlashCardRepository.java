@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.flashcard.exceptions.DuplicateQuestionException;
+import com.example.flashcard.exceptions.NoResourceFound;
 import com.example.flashcard.models.FlashCard;
 
 import java.util.ArrayList;
@@ -195,4 +196,45 @@ public class FlashCardRepository extends SQLiteOpenHelper {
 
         return flashCards;
     }
+
+
+    // Delete a question by its ID
+    public void deleteQuestionById(String tableName, String questionId) throws NoResourceFound {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            int rowsDeleted = db.delete(tableName, COLUMN_QUESTION_ID + " = ?", new String[]{questionId});
+
+            if (rowsDeleted == 0) {
+                Log.e("FlashCardRepository", "No rows deleted, question with ID " + questionId + " not found.");
+                throw new NoResourceFound("No ID found");
+            } else {
+                Log.d("FlashCardRepository", "Question deleted successfully. Rows affected: " + rowsDeleted);
+            }
+        } catch (Exception e) {
+            Log.e("FlashCardRepository", "Error deleting question with ID " + questionId, e);
+        } finally {
+            db.close();
+        }
+    }
+
+    // Clear all records in a specific table
+    public void clearTable(String tableName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            int rowsDeleted = db.delete(tableName, null, null); // Delete all rows without a WHERE clause
+
+            if (rowsDeleted == 0) {
+                Log.d("FlashCardRepository", "No records found in table " + tableName + " to delete.");
+            } else {
+                Log.d("FlashCardRepository", "All records cleared from table " + tableName + ". Rows affected: " + rowsDeleted);
+            }
+        } catch (Exception e) {
+            Log.e("FlashCardRepository", "Error clearing records from table " + tableName, e);
+        } finally {
+            db.close();
+        }
+    }
+
 }
