@@ -237,4 +237,29 @@ public class FlashCardRepository extends SQLiteOpenHelper {
         }
     }
 
+    // Check if a table is empty
+    public boolean isTableEmpty(String tableName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
+        boolean isEmpty = true;
+
+        try {
+            String query = "SELECT COUNT(*) FROM " + tableName;
+            cursor = db.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                int count = cursor.getInt(0);
+                isEmpty = (count == 0); // True if count is 0, indicating the table is empty
+            }
+        } catch (Exception e) {
+            Log.e("FlashCardRepository", "Error checking if table " + tableName + " is empty", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+
+        return isEmpty;
+    }
+
+
 }

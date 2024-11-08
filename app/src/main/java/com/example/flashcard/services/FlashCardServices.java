@@ -56,4 +56,12 @@ public class FlashCardServices {
         flashCardRepository.deleteQuestionById(tableName, flashCard.getId());
     }
 
+    public void deleteAllQuestions(String tableName) {
+        flashCardRepository.clearTable(tableName);
+    }
+
+
+    public boolean checTableEmpty(String tableName) {
+        return flashCardRepository.isTableEmpty(tableName);
+    }
 }

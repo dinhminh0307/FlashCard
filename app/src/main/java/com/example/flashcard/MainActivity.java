@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.flashcard.controller.CardPageActivity;
 import com.example.flashcard.controller.QuizzActivity;
 import com.example.flashcard.dialogs.OptionDialogFragment;
+import com.example.flashcard.exceptions.DatabaseEmptyException;
 import com.example.flashcard.services.FlashCardServices;
 import com.example.flashcard.utils.Constant;
 
@@ -59,11 +60,19 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
 
     @Override
     public void onQuizSelected() {
-        // Handle Quiz option - Start the quiz activity if you have one
-        Toast.makeText(this, "Quiz selected for " + selectedCategory, Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(MainActivity.this, QuizzActivity.class);
-        intent.putExtra("category_name", selectedCategory);
-        startActivity(intent);
+        try {
+            // Handle Quiz option - Start the quiz activity if you have one
+            if(flashCardServices.checTableEmpty(selectedCategory)) {
+                throw new DatabaseEmptyException("The table is empty, please add more data to start the quizz");
+            }
+            Toast.makeText(this, "Quiz selected for " + selectedCategory, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, QuizzActivity.class);
+            intent.putExtra("category_name", selectedCategory);
+            startActivity(intent);
+        } catch (DatabaseEmptyException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
     }
 
     @Override
@@ -77,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
     @Override
     public void onDeleteSelected() {
         // Handle Delete option (delete data for the selected category if necessary)
+        flashCardServices.deleteAllQuestions(selectedCategory);
         Toast.makeText(this, "Delete selected for " + selectedCategory, Toast.LENGTH_SHORT).show();
         // Implement delete functionality if needed
     }
