@@ -16,6 +16,7 @@ import com.example.flashcard.R;
 import com.example.flashcard.adapters.FlashcardAdapter;
 import com.example.flashcard.dialogs.FlashCardEditFragment;
 import com.example.flashcard.dialogs.FormDialogFragment;
+import com.example.flashcard.exceptions.NoResourceFound;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
 import com.example.flashcard.services.FlashCardServices;
@@ -95,14 +96,28 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
     private void editQuestion(String tableName) {
         Button editButton = findViewById(R.id.editButton);
         editButton.setOnClickListener(v -> {
-            int currentPosition = getCurrentCardPosition();
-            FlashCard currentCard = adapter.getFlashCardAt(currentPosition);
+            try {
+                int currentPosition = getCurrentCardPosition();
 
-            // Open the FlashCardEditFragment with the current flashcard data
-            FlashCardEditFragment editFragment = new FlashCardEditFragment(currentCard, tableName, currentCard.getId());
-            editFragment.show(getSupportFragmentManager(), "FlashCardEditFragment");
+                // Check if the flashCards list in the adapter is empty
+                if (adapter.getItemCount() == 0) {
+                    throw new NoResourceFound("No flashcards available to edit.");
+                }
+
+                FlashCard currentCard = adapter.getFlashCardAt(currentPosition);
+
+                // Open the FlashCardEditFragment with the current flashcard data
+                FlashCardEditFragment editFragment = new FlashCardEditFragment(currentCard, tableName, currentCard.getId());
+                editFragment.show(getSupportFragmentManager(), "FlashCardEditFragment");
+
+            } catch (NoResourceFound e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            } catch (IndexOutOfBoundsException e) {
+                Toast.makeText(this, "No flashcard selected.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
+
 
     private void toggleAnswerVisibility() {
         isAnswerVisible = !isAnswerVisible;

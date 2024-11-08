@@ -1,5 +1,6 @@
 package com.example.flashcard.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.flashcard.R;
+import com.example.flashcard.exceptions.NoResourceFound;
 import com.example.flashcard.models.FlashCard;
 
 import java.util.List;
