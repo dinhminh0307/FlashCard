@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
     public void onQuizSelected() {
         try {
             // Handle Quiz option - Start the quiz activity if you have one
-            if(flashCardServices.checTableEmpty(selectedCategory)) {
+            if(flashCardServices.checkTableEmpty(selectedCategory)) {
                 throw new DatabaseEmptyException("The table is empty, please add more data to start the quizz");
             }
             Toast.makeText(this, "Quiz selected for " + selectedCategory, Toast.LENGTH_SHORT).show();

@@ -61,7 +61,7 @@ public class FlashCardServices {
     }
 
 
-    public boolean checTableEmpty(String tableName) {
+    public boolean checkTableEmpty(String tableName) {
         return flashCardRepository.isTableEmpty(tableName);
     }
 }
