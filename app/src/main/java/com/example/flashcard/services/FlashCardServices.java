@@ -44,6 +44,10 @@ public class FlashCardServices {
             flashCardRepository.updateAnswerText(tableName, flashCard.getId(), flashCard);
         } else if(flashCard.getAnswers().isEmpty()) {
             flashCardRepository.updateQuestionText(tableName, flashCard.getId(), flashCard);
+        } else {
+            // if no one empty, add both to database
+            flashCardRepository.updateQuestionText(tableName, flashCard.getId(), flashCard);
+            flashCardRepository.updateAnswerText(tableName, flashCard.getId(), flashCard);
         }
     }
 }
