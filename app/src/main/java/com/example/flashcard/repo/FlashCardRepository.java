@@ -11,9 +11,7 @@ import com.example.flashcard.exceptions.DuplicateQuestionException;
 import com.example.flashcard.models.FlashCard;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FlashCardRepository extends SQLiteOpenHelper {
     // Database Name and Version
@@ -29,7 +27,7 @@ public class FlashCardRepository extends SQLiteOpenHelper {
     // Columns for questions tables
     private static final String COLUMN_QUESTION_ID = "question_id";
     private static final String COLUMN_QUESTION_TEXT = "question_text";
-    private static final String COLUMN_ANSWER_TEXT = "answer_text"; // New answer column
+    private static final String COLUMN_ANSWER_TEXT = "answer_text";
 
     public FlashCardRepository(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -37,7 +35,6 @@ public class FlashCardRepository extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create Math Questions Table
         String CREATE_MATH_TABLE = "CREATE TABLE " + TABLE_MATH + "("
                 + COLUMN_QUESTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_QUESTION_TEXT + " TEXT NOT NULL, "
@@ -45,7 +42,6 @@ public class FlashCardRepository extends SQLiteOpenHelper {
                 + ")";
         db.execSQL(CREATE_MATH_TABLE);
 
-        // Create Physics Questions Table
         String CREATE_PHYSICS_TABLE = "CREATE TABLE " + TABLE_PHYSICS + "("
                 + COLUMN_QUESTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_QUESTION_TEXT + " TEXT NOT NULL, "
@@ -53,7 +49,6 @@ public class FlashCardRepository extends SQLiteOpenHelper {
                 + ")";
         db.execSQL(CREATE_PHYSICS_TABLE);
 
-        // Create Computer Science Questions Table
         String CREATE_COMPUTER_SCIENCE_TABLE = "CREATE TABLE " + TABLE_COMPUTER_SCIENCE + "("
                 + COLUMN_QUESTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_QUESTION_TEXT + " TEXT NOT NULL, "
@@ -61,7 +56,6 @@ public class FlashCardRepository extends SQLiteOpenHelper {
                 + ")";
         db.execSQL(CREATE_COMPUTER_SCIENCE_TABLE);
 
-        // Create Language Questions Table
         String CREATE_LANGUAGE_TABLE = "CREATE TABLE " + TABLE_LANGUAGE + "("
                 + COLUMN_QUESTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_QUESTION_TEXT + " TEXT NOT NULL, "
@@ -79,22 +73,19 @@ public class FlashCardRepository extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Insert question and answer into the specified category table
+    // Insert question and answer
     public void insertQuestion(String tableName, FlashCard flashCard) throws DuplicateQuestionException {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
 
         try {
-            // Check if the question already exists
             String query = "SELECT COUNT(*) FROM " + tableName + " WHERE " + COLUMN_QUESTION_TEXT + " = ?";
             cursor = db.rawQuery(query, new String[]{flashCard.getQuestions()});
 
             if (cursor.moveToFirst() && cursor.getInt(0) > 0) {
-                // Throw the custom exception for a duplicate entry
                 throw new DuplicateQuestionException("Question already exists in the database: " + flashCard.getQuestions());
             }
 
-            // If no duplicate is found, proceed with insertion
             ContentValues values = new ContentValues();
             values.put(COLUMN_QUESTION_TEXT, flashCard.getQuestions());
             values.put(COLUMN_ANSWER_TEXT, flashCard.getAnswers());
@@ -109,9 +100,65 @@ public class FlashCardRepository extends SQLiteOpenHelper {
         }
     }
 
+    // Update only the question text for a specific flashcard
+    public void updateQuestionText(String tableName, String questionId, FlashCard flashCard) throws DuplicateQuestionException {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+
+        try {
+            // Check if the updated question already exists in the table (excluding the current question ID)
+            String duplicateQuery = "SELECT COUNT(*) FROM " + tableName + " WHERE " + COLUMN_QUESTION_TEXT + " = ? AND " + COLUMN_QUESTION_ID + " != ?";
+            cursor = db.rawQuery(duplicateQuery, new String[]{flashCard.getQuestions(), questionId});
+
+            if (cursor.moveToFirst() && cursor.getInt(0) > 0) {
+                // Throw the custom exception if a duplicate question is found
+                throw new DuplicateQuestionException("Question already exists in the database: " + flashCard.getQuestions());
+            }
+
+            // If no duplicate is found, proceed with updating the question text
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_QUESTION_TEXT, flashCard.getQuestions());
+
+            int rowsUpdated = db.update(tableName, values, COLUMN_QUESTION_ID + " = ?", new String[]{questionId});
+            if (rowsUpdated == 0) {
+                Log.e("FlashCardRepository", "No rows updated, question with ID " + questionId + " not found.");
+            } else {
+                Log.d("FlashCardRepository", "Question text updated successfully. Rows affected: " + rowsUpdated);
+            }
+        } catch (DuplicateQuestionException e) {
+            // Re-throw DuplicateQuestionException so it can be handled by the caller
+            throw e;
+        } catch (Exception e) {
+            Log.e("FlashCardRepository", "Error updating question text", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+    }
 
 
-    // Retrieve all questions and answers from a specified category table
+    // Update only the answer text for a specific flashcard
+    public void updateAnswerText(String tableName, String questionId, FlashCard flashCard) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_ANSWER_TEXT, flashCard.getAnswers());
+
+            int rowsUpdated = db.update(tableName, values, COLUMN_QUESTION_ID + " = ?", new String[]{questionId});
+            if (rowsUpdated == 0) {
+                Log.e("FlashCardRepository", "No rows updated, answer with ID " + questionId + " not found.");
+            } else {
+                Log.d("FlashCardRepository", "Answer text updated successfully. Rows affected: " + rowsUpdated);
+            }
+        } catch (Exception e) {
+            Log.e("FlashCardRepository", "Error updating answer text", e);
+        } finally {
+            db.close();
+        }
+    }
+
+    // Retrieve all questions and answers
     public List<FlashCard> getQuestionsAndAnswers(String tableName) {
         List<FlashCard> flashCards = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -121,23 +168,20 @@ public class FlashCardRepository extends SQLiteOpenHelper {
             String query = "SELECT question_id, question_text, answer_text FROM " + tableName;
             cursor = db.rawQuery(query, null);
 
-            int idIndex = cursor.getColumnIndex("question_id");
-            int questionIndex = cursor.getColumnIndex("question_text");
-            int answerIndex = cursor.getColumnIndex("answer_text");
+            int idIndex = cursor.getColumnIndex(COLUMN_QUESTION_ID);
+            int questionIndex = cursor.getColumnIndex(COLUMN_QUESTION_TEXT);
+            int answerIndex = cursor.getColumnIndex(COLUMN_ANSWER_TEXT);
 
-            // If any index is -1, the column does not exist in the result set
             if (idIndex == -1 || questionIndex == -1 || answerIndex == -1) {
                 throw new IllegalArgumentException("One or more columns not found in table " + tableName);
             }
 
-            // Populate the list if columns are found
             if (cursor.moveToFirst()) {
                 do {
                     String id = cursor.getString(idIndex);
                     String question = cursor.getString(questionIndex);
                     String answer = cursor.getString(answerIndex);
 
-                    // Create FlashCard object with id, question, and answer
                     FlashCard flashCard = new FlashCard(id, question, answer);
                     flashCards.add(flashCard);
                 } while (cursor.moveToNext());
@@ -151,7 +195,4 @@ public class FlashCardRepository extends SQLiteOpenHelper {
 
         return flashCards;
     }
-
-
-
 }

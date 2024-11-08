@@ -3,6 +3,8 @@ package com.example.flashcard.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,6 +14,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.flashcard.R;
 import com.example.flashcard.adapters.FlashcardAdapter;
+import com.example.flashcard.dialogs.FlashCardEditFragment;
 import com.example.flashcard.dialogs.FormDialogFragment;
 import com.example.flashcard.models.FlashCard;
 import com.example.flashcard.repo.FlashCardRepository;
@@ -51,6 +54,7 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
             navigateFlashCardByCategories(categoryName);
             setReturnButton();
             cardPageSlidingListener();
+            editQuestion(categoryName);
             addQuestion(categoryName);
 
         } catch (Exception e) {
@@ -85,6 +89,18 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
         addInButton.setOnClickListener(v -> {
             FormDialogFragment modal = new FormDialogFragment(tableName);
             modal.show(getSupportFragmentManager(), "FormDialogFragment");
+        });
+    }
+
+    private void editQuestion(String tableName) {
+        Button editButton = findViewById(R.id.editButton);
+        editButton.setOnClickListener(v -> {
+            int currentPosition = getCurrentCardPosition();
+            FlashCard currentCard = adapter.getFlashCardAt(currentPosition);
+
+            // Open the FlashCardEditFragment with the current flashcard data
+            FlashCardEditFragment editFragment = new FlashCardEditFragment(currentCard, tableName, currentCard.getId());
+            editFragment.show(getSupportFragmentManager(), "FlashCardEditFragment");
         });
     }
 

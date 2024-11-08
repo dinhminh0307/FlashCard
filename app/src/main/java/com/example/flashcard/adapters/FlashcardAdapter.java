@@ -29,6 +29,11 @@ public class FlashcardAdapter extends RecyclerView.Adapter<FlashcardAdapter.Flas
         notifyDataSetChanged(); // Refresh the adapter to apply the change
     }
 
+    public FlashCard getFlashCardAt(int position) {
+        return flashCards.get(position);
+    }
+
+
     @NonNull
     @Override
     public FlashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

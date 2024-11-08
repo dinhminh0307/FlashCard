@@ -38,4 +38,12 @@ public class FlashCardServices {
 
         return newCard; // Return the FlashCard if successfully added
     }
+
+    public void updateFlashCard(FlashCard flashCard, String tableName) throws DuplicateQuestionException{
+        if(flashCard.getQuestions().isEmpty()) {
+            flashCardRepository.updateAnswerText(tableName, flashCard.getId(), flashCard);
+        } else if(flashCard.getAnswers().isEmpty()) {
+            flashCardRepository.updateQuestionText(tableName, flashCard.getId(), flashCard);
+        }
+    }
 }
