@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,12 +50,23 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
             initAnswerField();
             navigateFlashCardByCategories(categoryName);
             setReturnButton();
+            cardPageSlidingListener();
             addQuestion(categoryName);
 
         } catch (Exception e) {
             Log.e("CardPageActivity", "Error initializing CardPageActivity", e);
             Toast.makeText(this, "An error occurred: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void cardPageSlidingListener() {
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                showCurrentCardPosition(); // Call the method to update the position display
+            }
+        });
     }
 
     @Override
@@ -113,6 +125,18 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
             Log.e("CardPageActivity", "Error fetching flashcards", e);
             Toast.makeText(this, "Error loading flashcards", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private int getCurrentCardPosition() {
+        return viewPager.getCurrentItem(); // This will return the index of the current card
+    }
+
+    // Example usage of getting the current card position
+    private void showCurrentCardPosition() {
+        int currentPosition = getCurrentCardPosition() + 1; // +1 for 1-based index
+        int totalCards = adapter.getItemCount();
+        TextView progress = findViewById(R.id.progressText);
+        progress.setText(currentPosition + "/" + totalCards);
     }
 
     private void setReturnButton() {
