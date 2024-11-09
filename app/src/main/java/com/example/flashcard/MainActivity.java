@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
         // Handle Delete option (delete data for the selected category if necessary)
         flashCardServices.deleteAllQuestions(selectedCategory);
         Toast.makeText(this, "Delete selected for " + selectedCategory, Toast.LENGTH_SHORT).show();
-        // Implement delete functionality if needed
     }
 
     @Override

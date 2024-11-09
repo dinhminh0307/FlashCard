@@ -69,7 +69,7 @@
         android:background="@drawable/border_box"
         android:ems="10"
         android:inputType="text"
-        android:text=" Enter your answer here"
+        android:hint=" Enter your answer here"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
