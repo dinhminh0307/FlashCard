@@ -36,7 +36,7 @@ public class RecordServices {
     public void savedToDatabase(Quizz quizz) {
         fetchQuizzList();  // Populate quizzList if it's empty
         String date = dateUtils.getDate();
-        if(!recordsRepository.hasRecordForDate(date)) {
+        if(recordsRepository.hasRecordForDate(date)) {
             recordsRepository.deleteRecordByDate(date); // Clear existing record for the date
         }
         quizzList.add(quizz);  // Add the new quiz to the list

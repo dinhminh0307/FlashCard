@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.flashcard.controller.CardPageActivity;
+import com.example.flashcard.controller.ProfilePageActivity;
 import com.example.flashcard.controller.QuizzActivity;
 import com.example.flashcard.dialogs.OptionDialogFragment;
 import com.example.flashcard.exceptions.DatabaseEmptyException;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
         flashCardServices.initDB();
         // Set up the function to navigate to each category
         setupCategoryListeners();
+        onProfileClicked();
     }
 
     /**
@@ -98,5 +101,17 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
     public void onCancelSelected() {
         // Simply dismiss the dialog without any further action
         Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
+    }
+
+    private void onProfileClicked() {
+        ImageView profile = findViewById(R.id.profile_icon);
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ProfilePageActivity.class);
+
+                startActivity(intent);
+            }
+        });
     }
 }
