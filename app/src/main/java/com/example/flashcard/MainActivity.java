@@ -1,6 +1,7 @@
 package com.example.flashcard;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -25,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
         setContentView(R.layout.activity_main);
 
         flashCardServices = new FlashCardServices(this);
-
+        flashCardServices.initDB();
         // Set up the function to navigate to each category
         setupCategoryListeners();
     }

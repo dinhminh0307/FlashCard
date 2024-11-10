@@ -19,6 +19,9 @@ public class FlashCardServices {
         flashCardRepository = new FlashCardRepository(context);
     }
 
+    public void initDB() {
+        flashCardRepository.getWritableDatabase();
+    }
     public List<FlashCard> getFlashCardContent(String tableName, String titleText) {
         try {
             return flashCardRepository.getQuestionsAndAnswers(tableName);

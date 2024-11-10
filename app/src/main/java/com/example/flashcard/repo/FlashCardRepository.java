@@ -74,6 +74,22 @@ public class FlashCardRepository extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Log the downgrade action
+        Log.d("FlashCardRepository", "Downgrading database from version " + oldVersion + " to " + newVersion);
+
+        // Drop the existing tables
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATH);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHYSICS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPUTER_SCIENCE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LANGUAGE);
+
+        // Recreate the tables with the current schema
+        onCreate(db);
+    }
+
+
     // Insert question and answer
     public void insertQuestion(String tableName, FlashCard flashCard) throws DuplicateQuestionException {
         SQLiteDatabase db = this.getWritableDatabase();
