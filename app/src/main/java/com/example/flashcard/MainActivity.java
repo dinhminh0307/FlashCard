@@ -14,11 +14,14 @@ import com.example.flashcard.controller.QuizzActivity;
 import com.example.flashcard.dialogs.OptionDialogFragment;
 import com.example.flashcard.exceptions.DatabaseEmptyException;
 import com.example.flashcard.services.FlashCardServices;
+import com.example.flashcard.services.RecordServices;
 import com.example.flashcard.utils.Constant;
 
 public class MainActivity extends AppCompatActivity implements OptionDialogFragment.OptionDialogListener {
     private FlashCardServices flashCardServices;
     private String selectedCategory;
+
+    private RecordServices recordServices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
