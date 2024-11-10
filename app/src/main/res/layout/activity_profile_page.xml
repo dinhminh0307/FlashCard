@@ -8,19 +8,23 @@
     tools:context=".controller.ProfilePageActivity">
 
     <!-- Profile Section -->
+
+    <!-- Dynamic TableLayout -->
+
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="375dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="34dp"
+        android:layout_height="140dp"
         android:background="@drawable/border_background"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/dynamicTable"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.555"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.256">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/profile_img"
@@ -42,22 +46,20 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <!-- Dynamic TableLayout -->
     <TableLayout
         android:id="@+id/dynamicTable"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="636dp"
         android:background="#f3f3f3"
         android:padding="16dp"
+        android:layout_marginTop="16dp"
         android:stretchColumns="1"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout3"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Header Row -->
+    <!-- Header Row -->
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

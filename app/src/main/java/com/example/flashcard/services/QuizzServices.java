@@ -65,6 +65,6 @@ public class QuizzServices {
     public void submit(String tableName, int attempts) {
         int total = quizz.size();
         Quizz savedQuizz = new Quizz(total, attempts, tableName);
-        recordServices.savedToDatabase(savedQuizz);
+        recordServices.saveToDatabase(savedQuizz);
     }
 }
