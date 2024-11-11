@@ -17,7 +17,7 @@ import java.util.List;
 public class FlashCardRepository extends SQLiteOpenHelper {
     // Database Name and Version
     private static final String DATABASE_NAME = "flashcard.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Table Names for each category
     private static final String TABLE_MATH = "math_questions";

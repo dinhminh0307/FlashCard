@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.example.flashcard.exceptions.NoResourceFound;
 import com.example.flashcard.models.FlashCard;
+import com.example.flashcard.models.Quizz;
 import com.example.flashcard.repo.FlashCardRepository;
+import com.example.flashcard.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +15,16 @@ import java.util.List;
 public class QuizzServices {
     private FlashCardRepository flashCardRepository;
 
+    private RecordServices recordServices;
+
     private List<FlashCard> quizz = new ArrayList<>();
+
+    private DateUtils dateUtils;
 
     public QuizzServices(Context context) {
         flashCardRepository = new FlashCardRepository(context);
+        recordServices = new RecordServices(context);
+        dateUtils = new DateUtils();
     }
 
     public void setQuizz(String tableName) {
@@ -52,5 +60,11 @@ public class QuizzServices {
             questions.add(c.getQuestions());
         }
         return questions;
+    }
+
+    public void submit(String tableName, int attempts) {
+        int total = quizz.size();
+        Quizz savedQuizz = new Quizz(total, attempts, tableName);
+        recordServices.saveToDatabase(savedQuizz);
     }
 }

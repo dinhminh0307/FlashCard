@@ -34,8 +34,7 @@ public class QuizzActivity extends AppCompatActivity {
 
     private List<String> listOfQuestion = new ArrayList<>();
 
-
-
+    private int attemptCount = 0;
     public QuizzActivity() {}
 
     @Override
@@ -61,6 +60,7 @@ public class QuizzActivity extends AppCompatActivity {
         onPreviousButton();
         setReturnButton();
 
+        onSubmittButton();
         // check the state of the quizz
 
     }
@@ -108,6 +108,16 @@ public class QuizzActivity extends AppCompatActivity {
         returnBtn.setOnClickListener(v -> finish());
     }
 
+    private void onSubmittButton() {
+        Button submitBtn = findViewById((R.id.submitBtn));
+        submitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                quizzServices.submit(categoryName, attemptCount);
+            }
+        });
+    }
+
     private void onNextBtn() {
         Button nextButton = findViewById(R.id.nextBtn);
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +143,7 @@ public class QuizzActivity extends AppCompatActivity {
                     // Display correct answer feedback
                 } else if (!ansResult) {
                     // Display incorrect answer feedback
+                    attemptCount++;
                     Toast.makeText(QuizzActivity.this, "Incorrect", Toast.LENGTH_SHORT).show();
                 }
             }
