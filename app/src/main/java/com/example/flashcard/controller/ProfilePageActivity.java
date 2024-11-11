@@ -1,7 +1,9 @@
 package com.example.flashcard.controller;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -30,6 +32,7 @@ public class ProfilePageActivity extends AppCompatActivity {
 
         // Fetch and display records
         populateTable();
+        onReturnButton();
     }
 
     private void populateTable() {
@@ -119,5 +122,15 @@ public class ProfilePageActivity extends AppCompatActivity {
 
         // Add the separator row to the TableLayout
         tableLayout.addView(separatorRow);
+    }
+
+    private void onReturnButton() {
+        ImageView returnBtn = findViewById(R.id.backButton);
+        returnBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }
