@@ -1,11 +1,15 @@
 package com.example.flashcard.controller;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.flashcard.R;
 import com.example.flashcard.models.Quizz;
@@ -18,6 +22,11 @@ public class ProfilePageActivity extends AppCompatActivity {
 
     private RecordServices recordServices;
     private TableLayout tableLayout;
+    private Button nextButton, prevButton;
+
+    private List<Record> records;
+    private int currentPage = 0;
+    private final int recordsPerPage = 2; // Display 2 days per page
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,23 +36,71 @@ public class ProfilePageActivity extends AppCompatActivity {
         // Initialize the RecordsRepository
         recordServices = new RecordServices(this);
 
-        // Find the TableLayout in the layout
+        // Find the TableLayout and pagination buttons in the layout
         tableLayout = findViewById(R.id.dynamicTable);
+        nextButton = findViewById(R.id.nextButton);
+        prevButton = findViewById(R.id.prevButton);
 
-        // Fetch and display records
-        populateTable();
+        // Fetch all records once
+        records = recordServices.getUserRecords();
+
+        // Display the first page
+        populateTable(currentPage);
+
+        // Set up pagination controls
+        setupPaginationButtons();
+
         onReturnButton();
     }
 
-    private void populateTable() {
-        // Fetch all records from the database
-        List<Record> records = recordServices.getUserRecords();
+    private void setupPaginationButtons() {
+        // Next Button
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((currentPage + 1) * recordsPerPage < records.size()) {
+                    currentPage++;
+                    populateTable(currentPage);
+                }
+                Toast.makeText(ProfilePageActivity.this, "next pressed", Toast.LENGTH_LONG).show();
+                Log.d("ProfilePageActivity", "Previous button clicked. Current page: " + currentPage);
+            }
+        });
 
-        // Loop through each record and add rows in the TableLayout
-        for (Record record : records) {
-            addRowsForRecord(record);  // Add main row with date and sub-rows for topics
-            addSeparatorRow();  // Add a separator row after each date group
+        // Previous Button
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentPage > 0) {
+                    currentPage--;
+                    populateTable(currentPage);
+                }
+                Toast.makeText(ProfilePageActivity.this, "prev pressed", Toast.LENGTH_LONG).show();
+                Log.d("ProfilePageActivity", "Next button clicked. Current page: " + currentPage);
+            }
+        });
+
+        // Initially disable the Previous button since we start on the first page
+        prevButton.setEnabled(false);
+    }
+
+    private void populateTable(int page) {
+        // Clear existing rows from the table layout
+        tableLayout.removeAllViews();
+
+        // Calculate the starting index and ending index for the current page
+        int start = page * recordsPerPage;
+        int end = Math.min(start + recordsPerPage, records.size());
+
+        // Loop through the records for the current page and display them
+        for (int i = start; i < end; i++) {
+            addRowsForRecord(records.get(i));
+            addSeparatorRow(); // Add a separator row after each date group
         }
+
+        // Enable or disable pagination buttons based on the page index
+        prevButton.setEnabled(page > 0);
+        nextButton.setEnabled(end < records.size());
     }
 
     private void addRowsForRecord(Record record) {
