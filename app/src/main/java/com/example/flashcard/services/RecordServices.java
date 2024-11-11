@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.flashcard.models.Quizz;
+import com.example.flashcard.models.Record;
 import com.example.flashcard.repo.RecordsRepository;
 import com.example.flashcard.utils.DateUtils;
 import com.example.flashcard.utils.Util;
@@ -71,5 +72,9 @@ public class RecordServices {
         } catch (Exception e) {
             Log.e("RecordServices", "Error saving quizzes to database", e);
         }
+    }
+
+    public List<Record> getUserRecords() {
+        return recordsRepository.getAllRecords();
     }
 }

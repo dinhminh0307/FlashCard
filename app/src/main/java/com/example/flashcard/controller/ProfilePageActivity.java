@@ -2,7 +2,6 @@ package com.example.flashcard.controller;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -11,12 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.flashcard.R;
 import com.example.flashcard.models.Quizz;
 import com.example.flashcard.models.Record;
-import com.example.flashcard.repo.RecordsRepository;
+import com.example.flashcard.services.RecordServices;
+
 import java.util.List;
 
 public class ProfilePageActivity extends AppCompatActivity {
 
-    private RecordsRepository recordsRepository;
+    private RecordServices recordServices;
     private TableLayout tableLayout;
 
     @Override
@@ -25,7 +25,7 @@ public class ProfilePageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile_page);
 
         // Initialize the RecordsRepository
-        recordsRepository = new RecordsRepository(this);
+        recordServices = new RecordServices(this);
 
         // Find the TableLayout in the layout
         tableLayout = findViewById(R.id.dynamicTable);
@@ -37,7 +37,7 @@ public class ProfilePageActivity extends AppCompatActivity {
 
     private void populateTable() {
         // Fetch all records from the database
-        List<Record> records = recordsRepository.getAllRecords();
+        List<Record> records = recordServices.getUserRecords();
 
         // Loop through each record and add rows in the TableLayout
         for (Record record : records) {
@@ -59,31 +59,35 @@ public class ProfilePageActivity extends AppCompatActivity {
                     TableRow.LayoutParams.WRAP_CONTENT
             ));
 
-            // Add Date only for the first row of this record
+            // Display Date only for the first row of this record
             if (i == 0) {
                 TextView dateTextView = new TextView(this);
-                dateTextView.setText(record.getDate());  // Assuming Record has a getDate() method
+                dateTextView.setText(record.getDate());  // Display the date only once per group
                 dateTextView.setPadding(8, 8, 8, 8);
                 dateTextView.setTextSize(16);
                 dateTextView.setTextColor(getResources().getColor(android.R.color.black));
+                dateTextView.setBackgroundResource(R.drawable.border);  // Set border background
                 row.addView(dateTextView);
             } else {
-                // Add an empty TextView to align topics under the date for subsequent rows
+                // Add an empty TextView to align the topics under the date for subsequent rows
                 TextView emptyDateTextView = new TextView(this);
                 emptyDateTextView.setText(""); // Empty placeholder to align with date column
                 emptyDateTextView.setPadding(8, 8, 8, 8);
+                emptyDateTextView.setBackgroundResource(R.drawable.border); // Set border background
                 row.addView(emptyDateTextView);
             }
 
-            // Create TextView for the topic
+            // Create TextView for the topic with border
             TextView topicTextView = new TextView(this);
             topicTextView.setText(quiz.getCategory());  // Assuming Quizz has getCategory() method
             topicTextView.setPadding(8, 8, 8, 8);
+            topicTextView.setBackgroundResource(R.drawable.border);  // Set border background for topic
 
-            // Create TextView for score
+            // Create TextView for score with border
             TextView scoreTextView = new TextView(this);
             scoreTextView.setText(String.valueOf(quiz.getTotal())); // Assuming Quizz has getTotal() method
             scoreTextView.setPadding(8, 8, 8, 8);
+            scoreTextView.setBackgroundResource(R.drawable.border);  // Set border background for score
 
             // Add Topic and Score TextViews to row
             row.addView(topicTextView);  // Topic column
@@ -106,14 +110,17 @@ public class ProfilePageActivity extends AppCompatActivity {
         TextView emptyDateCell = new TextView(this);
         emptyDateCell.setText(""); // Empty date cell
         emptyDateCell.setPadding(8, 8, 8, 8);
+        emptyDateCell.setBackgroundResource(R.drawable.border);  // Set border background
 
         TextView emptyTopicCell = new TextView(this);
         emptyTopicCell.setText(""); // Empty topic cell
         emptyTopicCell.setPadding(8, 8, 8, 8);
+        emptyTopicCell.setBackgroundResource(R.drawable.border);  // Set border background
 
         TextView emptyScoreCell = new TextView(this);
         emptyScoreCell.setText(""); // Empty score cell
         emptyScoreCell.setPadding(8, 8, 8, 8);
+        emptyScoreCell.setBackgroundResource(R.drawable.border);  // Set border background
 
         // Add the empty cells to the separator row
         separatorRow.addView(emptyDateCell);
