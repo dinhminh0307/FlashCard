@@ -113,7 +113,31 @@ public class QuizzActivity extends AppCompatActivity {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                quizzServices.submit(categoryName, attemptCount);
+                boolean ansResult = false;
+                try {
+                    EditText ans = findViewById(R.id.editAnswer);
+                    TextView ques = findViewById(R.id.questionId);
+
+                    FlashCard currAns = new FlashCard();
+                    currAns.setQuestions(ques.getText().toString());
+                    currAns.setAnswers(ans.getText().toString());
+
+                    ansResult = quizzServices.verifyAnswer(currAns);
+                } catch (NoResourceFound e) {
+                    Toast.makeText(QuizzActivity.this, "Question not found", Toast.LENGTH_LONG).show();
+                }
+
+                if (ansResult) {
+                    // move the cursor to next question
+                    quizzServices.submit(categoryName, attemptCount);
+                    finish();
+                    // Display correct answer feedback
+                } else if (!ansResult) {
+                    // Display incorrect answer feedback
+                    attemptCount++;
+                    Toast.makeText(QuizzActivity.this, "Incorrect", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
