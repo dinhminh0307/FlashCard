@@ -1,5 +1,6 @@
+// app/build.gradle.kts
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.application) // Use this if you have it defined in your version catalog
 }
 
 android {
@@ -12,7 +13,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -32,7 +32,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -40,4 +39,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // MPAndroidChart Dependency
+    implementation("com.github.PhilJay:MPAndroidChart:3.1.0")
 }
