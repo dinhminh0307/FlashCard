@@ -87,7 +87,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linearLayout3"
-        app:layout_constraintVertical_bias="0.348">
+        app:layout_constraintVertical_bias="0.283">
 
         <!-- Header Row -->
         <TableRow
@@ -147,6 +147,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.943" />
 
+    <!-- Add this PieChart view in your XML layout (activity_profile_page.xml) -->
     <Button
         android:id="@+id/pieChartBtn"
         android:layout_width="wrap_content"
@@ -154,12 +155,11 @@
         android:text="View Pie Chart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.895"
+        app:layout_constraintHorizontal_bias="0.866"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.479" />
+        app:layout_constraintVertical_bias="0.444" />
 
-    <!-- Add this PieChart view in your XML layout (activity_profile_page.xml) -->
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart"
         android:layout_width="match_parent"

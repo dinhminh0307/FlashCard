@@ -94,12 +94,13 @@ public class ProfilePageActivity extends AppCompatActivity {
         pieChartBtn.setText("View Table"); // Change button text to "View Table"
         isPieChartShown = true;
 
-        // Aggregate total scores by category for the current page (2 days)
+        // Aggregate average scores by category for the current page (2 days)
         int start = currentPage * recordsPerPage;
         int end = Math.min(start + recordsPerPage, records.size());
 
-        // Map to store the total scores per category
+        // Map to store the total scores per category and their counts for averaging
         HashMap<String, Integer> categoryScores = new HashMap<>();
+        HashMap<String, Integer> categoryCounts = new HashMap<>();
 
         for (int i = start; i < end; i++) {
             Record record = records.get(i);
@@ -108,22 +109,23 @@ public class ProfilePageActivity extends AppCompatActivity {
             for (Quizz quiz : record.getQuizzes()) {
                 int totalScore = (int) (((float) quiz.getTotal() / (quiz.getAttempts() + quiz.getTotal())) * 100);
                 String category = quiz.getCategory();
-                // get the mean score of 2 days
-                int temp_score = (categoryScores.getOrDefault(category, 0) + totalScore) / 2;
-                int category_total_score = temp_score;
-                // Aggregate scores by category
-                categoryScores.put(category,category_total_score);
+
+                // Update score total and count for averaging
+                categoryScores.put(category, categoryScores.getOrDefault(category, 0) + totalScore);
+                categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + 1);
             }
         }
 
-        // Prepare data entries for the pie chart
+        // Prepare data entries for the pie chart using average scores
         List<PieEntry> pieEntries = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : categoryScores.entrySet()) {
-            pieEntries.add(new PieEntry(entry.getValue(), entry.getKey()));
+            String category = entry.getKey();
+            int averageScore = entry.getValue() / categoryCounts.get(category); // Calculate the average
+            pieEntries.add(new PieEntry(averageScore, category));
         }
 
         // Create the pie data set and configure it
-        PieDataSet dataSet = new PieDataSet(pieEntries, "Total Scores per Category (2 Days)");
+        PieDataSet dataSet = new PieDataSet(pieEntries, "Average Scores per Category (2 Days)");
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         dataSet.setValueTextSize(12f);
 
@@ -132,7 +134,7 @@ public class ProfilePageActivity extends AppCompatActivity {
         pieChart.invalidate(); // Refresh the chart
 
         // Customize pie chart appearance
-        pieChart.setCenterText("Total Scores by Category");
+        pieChart.setCenterText("Average Scores by Category");
         pieChart.setHoleRadius(40f);
         pieChart.setTransparentCircleRadius(45f);
     }
