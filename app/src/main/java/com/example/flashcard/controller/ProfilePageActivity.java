@@ -40,6 +40,8 @@ public class ProfilePageActivity extends AppCompatActivity {
 
     private boolean isPieChartShown = false; // Track whether the pie chart is currently shown
 
+    private  TextView tableNumber;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +56,7 @@ public class ProfilePageActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.nextButton);
         prevButton = findViewById(R.id.prevButton);
         pieChartBtn = findViewById(R.id.pieChartBtn);
+        tableNumber = findViewById(R.id.tableNumber);
 
         // Fetch all records once
         records = recordServices.getUserRecords();
@@ -90,6 +93,7 @@ public class ProfilePageActivity extends AppCompatActivity {
         tableLayout.setVisibility(View.GONE);
         nextButton.setVisibility(View.GONE);
         prevButton.setVisibility(View.GONE);
+        tableNumber.setVisibility(View.GONE);
         pieChart.setVisibility(View.VISIBLE);
         pieChartBtn.setText("View Table"); // Change button text to "View Table"
         isPieChartShown = true;
@@ -144,6 +148,7 @@ public class ProfilePageActivity extends AppCompatActivity {
         tableLayout.setVisibility(View.VISIBLE);
         nextButton.setVisibility(View.VISIBLE);
         prevButton.setVisibility(View.VISIBLE);
+        tableNumber.setVisibility(View.VISIBLE);
         pieChart.setVisibility(View.GONE);
         pieChartBtn.setText("View Pie Chart"); // Change button text to "View Pie Chart"
         isPieChartShown = false;
@@ -176,6 +181,7 @@ public class ProfilePageActivity extends AppCompatActivity {
         prevButton.setEnabled(false);
     }
 
+
     private void populateTable(int page) {
         // Clear existing rows from the table layout
         tableLayout.removeAllViews();
@@ -194,9 +200,13 @@ public class ProfilePageActivity extends AppCompatActivity {
         prevButton.setEnabled(page > 0);
         nextButton.setEnabled(end < records.size());
 
-        // Ensure the table is shown if it was previously hidden
-        showTableView();
+        // Update the page indicator in tableNumber TextView
+
+        int totalPages = getTotalPages();
+        tableNumber.setText("Page " + (currentPage + 1) + " of " + totalPages);
     }
+
+
 
     private void addRowsForRecord(Record record) {
         List<Quizz> quizzes = record.getQuizzes();
@@ -274,6 +284,11 @@ public class ProfilePageActivity extends AppCompatActivity {
 
         tableLayout.addView(separatorRow);
     }
+
+    private int getTotalPages() {
+        return (int) Math.ceil((double) records.size() / recordsPerPage);
+    }
+
 
     private void onReturnButton() {
         ImageView returnBtn = findViewById(R.id.backButton);
