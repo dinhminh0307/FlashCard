@@ -142,7 +142,8 @@ public class ProfilePageActivity extends AppCompatActivity {
 
             // Create TextView for score with border
             TextView scoreTextView = new TextView(this);
-            scoreTextView.setText(String.valueOf(quiz.getTotal())); // Assuming Quizz has getTotal() method
+            int total_score = (int) (((float) quiz.getTotal() /(quiz.getAttempts() + quiz.getTotal()) ) * 100);
+            scoreTextView.setText(String.valueOf(total_score)); // Assuming Quizz has getTotal() method
             scoreTextView.setPadding(8, 8, 8, 8);
             scoreTextView.setBackgroundResource(R.drawable.border);  // Set border background for score
 
