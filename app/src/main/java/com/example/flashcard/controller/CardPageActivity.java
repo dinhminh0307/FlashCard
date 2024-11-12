@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -166,9 +167,17 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
     private void showCurrentCardPosition() {
         int currentPosition = getCurrentCardPosition() + 1; // +1 for 1-based index
         int totalCards = adapter.getItemCount();
+
+        // Update the text progress indicator
         TextView progress = findViewById(R.id.progressText);
         progress.setText(currentPosition + "/" + totalCards);
+
+        // Set the progress bar value
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        int progressPercentage = (int) (((float) currentPosition / totalCards) * 100); // Calculate percentage
+        progressBar.setProgress(progressPercentage, true);
     }
+
 
     private void setReturnButton() {
         ImageView returnBtn = findViewById(R.id.backButton);
