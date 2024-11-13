@@ -46,23 +46,24 @@ public class TimeTableActivity extends AppCompatActivity {
             String timeLabel = String.format("%02d:00", hour);
 
             TableRow tableRow = new TableRow(this);
-            tableRow.setPadding(8, 8, 8, 8);
+            tableRow.setPadding(0, 0, 0, 0); // Ensure no extra padding
+            tableRow.setLayoutParams(new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    TableLayout.LayoutParams.WRAP_CONTENT));
 
             // Time column
             TextView timeTextView = new TextView(this);
             timeTextView.setText(timeLabel);
             timeTextView.setGravity(Gravity.CENTER);
-            timeTextView.setLayoutParams(new TableRow.LayoutParams(
-                    TableRow.LayoutParams.WRAP_CONTENT,
-                    TableRow.LayoutParams.WRAP_CONTENT));
-            timeTextView.setPadding(4, 4, 4, 4);
+            timeTextView.setPadding(8, 8, 8, 8);
+            timeTextView.setBackgroundResource(R.drawable.cell_border); // Apply border
             tableRow.addView(timeTextView);
 
             // Add cells for each day
             for (String day : daysOfWeek) {
                 TextView cell = new TextView(this);
                 cell.setId(View.generateViewId());
-                cell.setBackgroundColor(Color.parseColor("#E0E0E0")); // Default background color
+                cell.setBackgroundResource(R.drawable.cell_border); // Apply border
                 cell.setGravity(Gravity.CENTER);
                 cell.setPadding(8, 8, 8, 8);
                 cell.setClickable(true);
@@ -81,6 +82,7 @@ public class TimeTableActivity extends AppCompatActivity {
             tableLayout.addView(tableRow);
         }
     }
+
 
     // Handle cell clicks
     public void onTimeSlotClick(View view) {
@@ -110,8 +112,8 @@ public class TimeTableActivity extends AppCompatActivity {
                 // Update the cell with the event name
                 cellView.setText(eventName);
 
-                // Highlight the cell by changing its background color
-                cellView.setBackgroundColor(Color.parseColor("#B3E5FC")); // Light blue background
+                // Highlight the cell by changing its background drawable
+                cellView.setBackgroundResource(R.drawable.cell_border_highlighted);
 
                 // Save the event
                 Map<String, String> dayEvents = eventsMap.getOrDefault(day, new HashMap<>());
@@ -128,6 +130,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
         builder.show();
     }
+
 }
 
 
