@@ -149,5 +149,27 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.626" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/speakBtn"
+        android:layout_width="112dp"
+        android:layout_height="58dp"
+        android:background="@drawable/rounded_square_background"
+        android:backgroundTint="@null"
+        android:clickable="true"
+        android:contentDescription="Expand Options"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Speak"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        app:cornerRadius="16dp"
+        app:iconTint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.728" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

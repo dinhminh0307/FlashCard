@@ -2,6 +2,7 @@ package com.example.flashcard.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,8 +25,11 @@ import com.example.flashcard.services.FlashCardServices;
 import com.example.flashcard.utils.Constant;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.media.AudioManager;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class CardPageActivity extends AppCompatActivity implements FormDialogFragment.OnQuestionAddedListener {
 //    private FlashCardRepository flashCardRepository;
@@ -35,6 +39,9 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
     private boolean isAnswerVisible = false;
 
     private String categoryName = "";
+
+    private Button speakBtn;
+    private TextToSpeech textToSpeech;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +58,11 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
             if (categoryName == null) {
                 throw new IllegalArgumentException("Category name is null");
             }
-
+            speakBtn = findViewById(R.id.speakBtn);
+            enableSpeakButton();
             initAnswerField();
+            initTextToSpeech();
+            onSpeakButtonClick();
             navigateFlashCardByCategories(categoryName);
             setReturnButton();
             cardPageSlidingListener();
@@ -65,6 +75,69 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
         }
     }
 
+    private void enableSpeakButton() {
+        if(Objects.equals(categoryName, Constant.LANGUAGE_CONST)) {
+            speakBtn.setVisibility(View.VISIBLE);
+        } else {
+            speakBtn.setVisibility(View.GONE);
+        }
+    }
+
+    private void onSpeakButtonClick() {
+        speakBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                speak();
+            }
+        });
+    }
+
+    // Method to convert text to speech
+    private void speak() {
+        int current = getCurrentCardPosition(); // get current position
+        setMaxVolume();
+        // Check if the flashCards list in the adapter is empty
+        if (adapter.getItemCount() == 0) {
+            throw new NoResourceFound("No flashcards available to edit.");
+        }
+
+        FlashCard currentCard = adapter.getFlashCardAt(current);
+
+        String text = currentCard.getQuestions();
+        if (text.isEmpty()) {
+            Toast.makeText(this, "Please enter text to speak", Toast.LENGTH_SHORT).show();
+        } else {
+            textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+        super.onDestroy();
+    }
+
+    private void initTextToSpeech() {
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status == TextToSpeech.SUCCESS) {
+                    int result = textToSpeech.setLanguage(Locale.US);
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported or missing data");
+                    } else {
+                        speakBtn.setEnabled(true); // Enable button if TTS is available
+
+                    }
+                } else {
+                    Log.e("TTS", "Initialization failed");
+                }
+            }
+        });
+    }
     private void cardPageSlidingListener() {
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -73,6 +146,15 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
                 showCurrentCardPosition(); // Call the method to update the position display
             }
         });
+    }
+
+    private void setMaxVolume() {
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        audioManager.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+                0
+        );
     }
 
     @Override
