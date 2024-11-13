@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".controller.TimeTableActivity">
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableLayout
+            android:id="@+id/tableLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:shrinkColumns="*"
+            android:padding="16dp">
+
+            <!-- Header Row -->
+            <TableRow
+                android:background="#FFEB3B"
+                android:padding="8dp">
+
+                <TextView
+                    android:text="Time"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_margin="4dp" />
+
+                <!-- Days of the Week -->
+                <TextView
+                    android:text="Monday"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:text="Tuesday"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:text="Wednesday"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:text="Thursday"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_margin="4dp" />
+
+                <TextView
+                    android:text="Friday"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_margin="4dp" />
+
+            </TableRow>
+
+            <!-- Time slots will be added programmatically -->
+
+        </TableLayout>
+
+    </HorizontalScrollView>
+
+</ScrollView>
