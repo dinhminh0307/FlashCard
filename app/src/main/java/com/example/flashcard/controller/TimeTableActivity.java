@@ -2,10 +2,7 @@ package com.example.flashcard.controller;
 
 import android.app.AlertDialog;
 import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,11 +12,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.flashcard.R;
 
@@ -29,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class TimeTableActivity extends AppCompatActivity {
 
@@ -39,7 +31,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
     // Variables to track selection
     private boolean isSelecting = false;
-    private Set<TextView> selectedCells = new HashSet<>();
+    private HashSet<TextView> selectedCells = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,83 +44,147 @@ public class TimeTableActivity extends AppCompatActivity {
         generateTimeTable();
     }
 
+    /**
+     * Generates the entire timetable by adding the header and time slot rows.
+     */
     private void generateTimeTable() {
+        // Add header row with days of the week
+        addHeaderRow();
+
         // Generate time slots from 0h to 24h
         for (int hour = 0; hour < 24; hour++) {
             String timeLabel = String.format("%02d:00", hour);
-
-            TableRow tableRow = new TableRow(this);
-            tableRow.setPadding(0, 0, 0, 0); // Ensure no extra padding
-            tableRow.setLayoutParams(new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.MATCH_PARENT,
-                    TableLayout.LayoutParams.WRAP_CONTENT));
-
-            // Time column
-            TextView timeTextView = new TextView(this);
-            timeTextView.setText(timeLabel);
-            timeTextView.setGravity(Gravity.CENTER);
-            timeTextView.setPadding(8, 8, 8, 8);
-            timeTextView.setBackgroundResource(R.drawable.cell_border); // Apply border
-            tableRow.addView(timeTextView);
-
-            // Add cells for each day
-            for (String day : daysOfWeek) {
-                TextView cell = new TextView(this);
-                cell.setId(View.generateViewId());
-                cell.setBackgroundResource(R.drawable.cell_border); // Apply border
-                cell.setGravity(Gravity.CENTER);
-                cell.setPadding(8, 8, 8, 8);
-                cell.setClickable(true);
-                cell.setFocusable(true);
-
-                // Set tag to identify the cell
-                cell.setTag(day + "_" + timeLabel);
-
-                // Set touch listener
-                cell.setOnTouchListener(cellTouchListener);
-
-                tableRow.addView(cell);
-            }
-
-            // Add the row to the table
+            TableRow tableRow = createTimeSlotRow(timeLabel);
             tableLayout.addView(tableRow);
         }
     }
 
-    // Define the touch listener for cells
-    private View.OnTouchListener cellTouchListener = new View.OnTouchListener() {
+    /**
+     * Adds the header row containing the days of the week to the timetable.
+     */
+    private void addHeaderRow() {
+        TableRow headerRow = new TableRow(this);
+        headerRow.setLayoutParams(new TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT));
+
+        // Empty cell at the top-left corner
+        TextView emptyCell = new TextView(this);
+        emptyCell.setBackgroundResource(R.drawable.cell_border);
+        emptyCell.setPadding(8, 8, 8, 8);
+        headerRow.addView(emptyCell);
+
+        // Add day headers
+        for (String day : daysOfWeek) {
+            TextView dayHeader = createHeaderCell(day);
+            headerRow.addView(dayHeader);
+        }
+
+        tableLayout.addView(headerRow);
+    }
+
+    /**
+     * Creates a header cell with the given text.
+     *
+     * @param text The text to display in the header cell.
+     * @return A TextView configured as a header cell.
+     */
+    private TextView createHeaderCell(String text) {
+        TextView headerCell = new TextView(this);
+        headerCell.setText(text);
+        headerCell.setGravity(Gravity.CENTER);
+        headerCell.setTypeface(null, android.graphics.Typeface.BOLD);
+        headerCell.setPadding(8, 8, 8, 8);
+        headerCell.setBackgroundResource(R.drawable.cell_border);
+        return headerCell;
+    }
+
+    /**
+     * Creates a table row for a specific time slot, including time and day cells.
+     *
+     * @param timeLabel The label for the time slot (e.g., "09:00").
+     * @return A TableRow containing the time slot data.
+     */
+    private TableRow createTimeSlotRow(String timeLabel) {
+        TableRow tableRow = new TableRow(this);
+        tableRow.setPadding(0, 0, 0, 0); // Ensure no extra padding
+        tableRow.setLayoutParams(new TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT));
+
+        // Time cell
+        TextView timeTextView = createTimeCell(timeLabel);
+        tableRow.addView(timeTextView);
+
+        // Day cells
+        for (String day : daysOfWeek) {
+            TextView cell = createTimeSlotCell(day, timeLabel);
+            tableRow.addView(cell);
+        }
+
+        return tableRow;
+    }
+
+    /**
+     * Creates a time cell for the leftmost column.
+     *
+     * @param timeLabel The label for the time slot (e.g., "09:00").
+     * @return A TextView configured as a time cell.
+     */
+    private TextView createTimeCell(String timeLabel) {
+        TextView timeCell = new TextView(this);
+        timeCell.setText(timeLabel);
+        timeCell.setGravity(Gravity.CENTER);
+        timeCell.setPadding(8, 8, 8, 8);
+        timeCell.setBackgroundResource(R.drawable.cell_border);
+        return timeCell;
+    }
+
+    /**
+     * Creates a cell for a specific day and time.
+     *
+     * @param day       The day of the week.
+     * @param timeLabel The time slot label.
+     * @return A TextView configured as a time slot cell.
+     */
+    private TextView createTimeSlotCell(String day, String timeLabel) {
+        TextView cell = new TextView(this);
+        cell.setId(View.generateViewId());
+        cell.setBackgroundResource(R.drawable.cell_border);
+        cell.setGravity(Gravity.CENTER);
+        cell.setPadding(8, 8, 8, 8);
+        cell.setClickable(true);
+        cell.setFocusable(true);
+
+        // Set tag to identify the cell
+        cell.setTag(day + "_" + timeLabel);
+
+        // Set touch listener
+        cell.setOnTouchListener(cellTouchListener);
+
+        return cell;
+    }
+
+    /**
+     * Touch listener for the timetable cells to handle multi-selection.
+     */
+    private final View.OnTouchListener cellTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent event) {
             TextView cell = (TextView) view;
 
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
-                    if (cell.getText().toString().isEmpty()) {
-                        isSelecting = true;
-                        selectCell(cell);
-                    }
+                    handleActionDown(cell);
                     return true;
 
                 case MotionEvent.ACTION_MOVE:
-                    if (isSelecting) {
-                        // Get the cell under the current touch point
-                        TextView currentCell = getCellAtPosition(event);
-                        if (currentCell != null && currentCell.getText().toString().isEmpty()
-                                && !selectedCells.contains(currentCell)) {
-                            selectCell(currentCell);
-                        }
-                    }
+                    handleActionMove(event);
                     return true;
 
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    if (isSelecting) {
-                        isSelecting = false;
-                        if (!selectedCells.isEmpty()) {
-                            // Prompt to create event for selected cells
-                            showCreateEventDialogForSelection();
-                        }
-                    }
+                    handleActionUp();
                     return true;
 
                 default:
@@ -137,6 +193,50 @@ public class TimeTableActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Handles the ACTION_DOWN touch event.
+     *
+     * @param cell The cell where the touch event started.
+     */
+    private void handleActionDown(TextView cell) {
+        if (cell.getText().toString().isEmpty()) {
+            isSelecting = true;
+            selectCell(cell);
+        }
+    }
+
+    /**
+     * Handles the ACTION_MOVE touch event.
+     *
+     * @param event The MotionEvent containing touch coordinates.
+     */
+    private void handleActionMove(MotionEvent event) {
+        if (isSelecting) {
+            TextView currentCell = getCellAtPosition(event);
+            if (currentCell != null && currentCell.getText().toString().isEmpty()
+                    && !selectedCells.contains(currentCell)) {
+                selectCell(currentCell);
+            }
+        }
+    }
+
+    /**
+     * Handles the ACTION_UP and ACTION_CANCEL touch events.
+     */
+    private void handleActionUp() {
+        if (isSelecting) {
+            isSelecting = false;
+            if (!selectedCells.isEmpty()) {
+                showCreateEventDialogForSelection();
+            }
+        }
+    }
+
+    /**
+     * Selects a cell and visually indicates the selection.
+     *
+     * @param cell The cell to select.
+     */
     private void selectCell(TextView cell) {
         String tag = (String) cell.getTag();
         if (tag != null && !selectedCells.contains(cell)) {
@@ -146,31 +246,29 @@ public class TimeTableActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retrieves the cell at the current touch position.
+     *
+     * @param event The MotionEvent containing touch coordinates.
+     * @return The TextView cell at the touch position, or null if none found.
+     */
     private TextView getCellAtPosition(MotionEvent event) {
-        // Get the location of the touch event on the screen
-        int[] location = new int[2];
-        tableLayout.getLocationOnScreen(location);
+        // Get touch coordinates
         float x = event.getRawX();
         float y = event.getRawY();
 
-        // Iterate through the cells to find which one contains the touch point
+        // Iterate over the table rows
         for (int i = 0; i < tableLayout.getChildCount(); i++) {
-            View row = tableLayout.getChildAt(i);
-            if (row instanceof TableRow) {
-                TableRow tableRow = (TableRow) row;
-                for (int j = 1; j < tableRow.getChildCount(); j++) { // Start from 1 to skip the time column
+            View rowView = tableLayout.getChildAt(i);
+            if (rowView instanceof TableRow) {
+                TableRow tableRow = (TableRow) rowView;
+
+                // Iterate over the cells in the row
+                for (int j = 1; j < tableRow.getChildCount(); j++) { // Skip the time column
                     View cellView = tableRow.getChildAt(j);
                     if (cellView instanceof TextView) {
                         TextView cell = (TextView) cellView;
-                        int[] cellLocation = new int[2];
-                        cell.getLocationOnScreen(cellLocation);
-                        int cellX = cellLocation[0];
-                        int cellY = cellLocation[1];
-                        int cellWidth = cell.getWidth();
-                        int cellHeight = cell.getHeight();
-
-                        Rect cellRect = new Rect(cellX, cellY, cellX + cellWidth, cellY + cellHeight);
-                        if (cellRect.contains((int) x, (int) y)) {
+                        if (isPointInsideView(x, y, cell)) {
                             return cell;
                         }
                     }
@@ -180,6 +278,28 @@ public class TimeTableActivity extends AppCompatActivity {
         return null;
     }
 
+    /**
+     * Checks if a point is inside a given view.
+     *
+     * @param x    The x-coordinate of the point.
+     * @param y    The y-coordinate of the point.
+     * @param view The view to check against.
+     * @return True if the point is inside the view, false otherwise.
+     */
+    private boolean isPointInsideView(float x, float y, View view) {
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        int left = location[0];
+        int top = location[1];
+        int right = left + view.getWidth();
+        int bottom = top + view.getHeight();
+
+        return x >= left && x <= right && y >= top && y <= bottom;
+    }
+
+    /**
+     * Displays a dialog for creating an event with the selected time slots.
+     */
     private void showCreateEventDialogForSelection() {
         // Collect day and time information from selected cells
         List<String> selectedTags = new ArrayList<>();
@@ -187,23 +307,31 @@ public class TimeTableActivity extends AppCompatActivity {
             selectedTags.add((String) cell.getTag());
         }
 
-        // Sort the selected tags (optional)
+        // Sort the selected tags for consistent display
         Collections.sort(selectedTags);
 
         // Build a summary of selected time slots
         StringBuilder timeSlots = new StringBuilder();
-        Set<String> daysSet = new HashSet<>();
         for (String tag : selectedTags) {
             String[] parts = tag.split("_");
             String day = parts[0];
             String time = parts[1];
-            daysSet.add(day);
             timeSlots.append(day).append(" at ").append(time).append("\n");
         }
 
+        // Show the event creation dialog
+        createEventDialog(timeSlots.toString());
+    }
+
+    /**
+     * Creates and displays the event creation dialog.
+     *
+     * @param timeSlotsSummary A summary of the selected time slots.
+     */
+    private void createEventDialog(String timeSlotsSummary) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Create Event");
-        builder.setMessage("Create an event for the following time slots?\n" + timeSlots.toString());
+        builder.setMessage("Create an event for the following time slots?\n" + timeSlotsSummary);
 
         // Input field for event name
         final EditText input = new EditText(this);
@@ -213,41 +341,49 @@ public class TimeTableActivity extends AppCompatActivity {
         builder.setPositiveButton("Create", (dialog, which) -> {
             String eventName = input.getText().toString().trim();
             if (!eventName.isEmpty()) {
-                // Update each selected cell
-                for (TextView cell : selectedCells) {
-                    cell.setText(eventName);
-                    // Remove border to indicate the cell is occupied
-                    cell.setBackgroundColor(Color.TRANSPARENT);
-
-                    // Save the event
-                    String tag = (String) cell.getTag();
-                    String[] parts = tag.split("_");
-                    String day = parts[0];
-                    String time = parts[1];
-
-                    Map<String, String> dayEvents = eventsMap.getOrDefault(day, new HashMap<>());
-                    dayEvents.put(time, eventName);
-                    eventsMap.put(day, dayEvents);
-                }
-                // Clear the selection set
-                selectedCells.clear();
-
+                updateCellsWithEvent(eventName);
                 Toast.makeText(this, "Event '" + eventName + "' created.", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Event name cannot be empty.", Toast.LENGTH_SHORT).show();
-                // Reset cell backgrounds
                 resetSelectedCells();
             }
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> {
-            // Reset cell backgrounds
             resetSelectedCells();
         });
 
         builder.show();
     }
 
+    /**
+     * Updates the selected cells with the event name and removes their borders.
+     *
+     * @param eventName The name of the event to display.
+     */
+    private void updateCellsWithEvent(String eventName) {
+        for (TextView cell : selectedCells) {
+            cell.setText(eventName);
+            // Remove border to indicate the cell is occupied
+            cell.setBackgroundColor(Color.TRANSPARENT);
+
+            // Save the event
+            String tag = (String) cell.getTag();
+            String[] parts = tag.split("_");
+            String day = parts[0];
+            String time = parts[1];
+
+            Map<String, String> dayEvents = eventsMap.getOrDefault(day, new HashMap<>());
+            dayEvents.put(time, eventName);
+            eventsMap.put(day, dayEvents);
+        }
+        // Clear the selection set
+        selectedCells.clear();
+    }
+
+    /**
+     * Resets the selected cells to their default appearance if event creation is canceled.
+     */
     private void resetSelectedCells() {
         for (TextView cell : selectedCells) {
             cell.setBackgroundResource(R.drawable.cell_border);
@@ -255,7 +391,3 @@ public class TimeTableActivity extends AppCompatActivity {
         selectedCells.clear();
     }
 }
-
-
-
-
