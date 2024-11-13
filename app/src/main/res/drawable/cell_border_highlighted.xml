@@ -1,5 +1,5 @@
-<!-- res/drawable/cell_border_highlighted.xml -->
+<!-- res/drawable/cell_border_selected.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#B3E5FC" /> <!-- Highlighted background color -->
+    <solid android:color="#FFCC80" /> <!-- Light orange background for selection -->
     <stroke android:width="1dp" android:color="#000000" /> <!-- Border color and width -->
 </shape>

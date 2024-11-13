@@ -1,0 +1,4 @@
+<!-- res/drawable/cell_border_occupied.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#B0BEC5" /> <!-- Gray background to indicate occupied cell -->
+</shape>
