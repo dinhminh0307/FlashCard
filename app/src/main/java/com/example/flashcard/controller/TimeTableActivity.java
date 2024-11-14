@@ -111,9 +111,13 @@ public class TimeTableActivity extends AppCompatActivity {
         headerCell.setGravity(Gravity.CENTER);
         headerCell.setTypeface(null, android.graphics.Typeface.BOLD);
         headerCell.setPadding(8, 8, 8, 8);
-        headerCell.setBackgroundResource(R.drawable.cell_border);
+        headerCell.setTextColor(Color.WHITE); // Set text color to white
+        headerCell.setBackgroundResource(R.drawable.header_cell_background); // Use new drawable
         return headerCell;
     }
+
+
+
 
     /**
      * Creates a table row for a specific time slot, including time and day cells.
