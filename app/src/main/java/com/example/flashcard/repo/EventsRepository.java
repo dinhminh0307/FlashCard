@@ -18,7 +18,7 @@ import java.util.List;
 public class EventsRepository extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "flashcard.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Table name
     private static final String TABLE_EVENTS = "Events";

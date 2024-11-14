@@ -87,7 +87,12 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
         speakBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                speak();
+                try {
+                    speak();
+                } catch (NoResourceFound e) {
+                    Toast.makeText(CardPageActivity.this, "Please add card to speak", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
@@ -98,10 +103,12 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
         setMaxVolume();
         // Check if the flashCards list in the adapter is empty
         if (adapter.getItemCount() == 0) {
+
             throw new NoResourceFound("No flashcards available to edit.");
         }
 
         FlashCard currentCard = adapter.getFlashCardAt(current);
+
 
         String text = currentCard.getQuestions();
         if (text.isEmpty()) {
@@ -232,6 +239,8 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
     private void fetchFlashCardPages(String tableName, String titleText) {
         try {
             List<FlashCard> questions = flashCardServices.getFlashCardContent(tableName, titleText);
+            Log.d("FlashCardRepository", "Questions: " + questions.get(0).getQuestions());
+
             adapter = new FlashcardAdapter(questions);
             viewPager.setAdapter(adapter);
 

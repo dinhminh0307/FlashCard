@@ -36,41 +36,42 @@ public class FlashCardRepository extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_MATH_TABLE = "CREATE TABLE " + TABLE_MATH + "("
+        String CREATE_MATH_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_MATH + "("
                 + COLUMN_QUESTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_QUESTION_TEXT + " TEXT NOT NULL, "
                 + COLUMN_ANSWER_TEXT + " TEXT NOT NULL"
                 + ")";
         db.execSQL(CREATE_MATH_TABLE);
 
-        String CREATE_PHYSICS_TABLE = "CREATE TABLE " + TABLE_PHYSICS + "("
+        String CREATE_PHYSICS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_PHYSICS + "("
                 + COLUMN_QUESTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_QUESTION_TEXT + " TEXT NOT NULL, "
                 + COLUMN_ANSWER_TEXT + " TEXT NOT NULL"
                 + ")";
         db.execSQL(CREATE_PHYSICS_TABLE);
 
-        String CREATE_COMPUTER_SCIENCE_TABLE = "CREATE TABLE " + TABLE_COMPUTER_SCIENCE + "("
+        String CREATE_COMPUTER_SCIENCE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_COMPUTER_SCIENCE + "("
                 + COLUMN_QUESTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_QUESTION_TEXT + " TEXT NOT NULL, "
                 + COLUMN_ANSWER_TEXT + " TEXT NOT NULL"
                 + ")";
         db.execSQL(CREATE_COMPUTER_SCIENCE_TABLE);
 
-        String CREATE_LANGUAGE_TABLE = "CREATE TABLE " + TABLE_LANGUAGE + "("
+        String CREATE_LANGUAGE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_LANGUAGE + "("
                 + COLUMN_QUESTION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_QUESTION_TEXT + " TEXT NOT NULL, "
                 + COLUMN_ANSWER_TEXT + " TEXT NOT NULL"
                 + ")";
+        Log.d("FlashCardRepository", "Creating table: " + TABLE_LANGUAGE);
         db.execSQL(CREATE_LANGUAGE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATH);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHYSICS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPUTER_SCIENCE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LANGUAGE);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATH);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHYSICS);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPUTER_SCIENCE);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LANGUAGE);
         onCreate(db);
     }
 
@@ -80,10 +81,10 @@ public class FlashCardRepository extends SQLiteOpenHelper {
         Log.d("FlashCardRepository", "Downgrading database from version " + oldVersion + " to " + newVersion);
 
         // Drop the existing tables
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATH);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHYSICS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPUTER_SCIENCE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LANGUAGE);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATH);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHYSICS);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMPUTER_SCIENCE);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LANGUAGE);
 
         // Recreate the tables with the current schema
         onCreate(db);
@@ -111,11 +112,15 @@ public class FlashCardRepository extends SQLiteOpenHelper {
             if (result == -1) {
                 throw new RuntimeException("Failed to insert question into table: " + tableName);
             }
+        } catch (Exception e) {
+            Log.e("FlashCardRepository", "Error inserting question", e);
+            throw new RuntimeException("Error inserting question: " + e.getMessage());
         } finally {
             if (cursor != null) cursor.close();
             db.close();
         }
     }
+
 
     // Update only the question text for a specific flashcard
     public void updateQuestionText(String tableName, String questionId, FlashCard flashCard) throws DuplicateQuestionException {
