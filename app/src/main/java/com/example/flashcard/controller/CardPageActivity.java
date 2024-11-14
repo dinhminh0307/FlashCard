@@ -239,7 +239,6 @@ public class CardPageActivity extends AppCompatActivity implements FormDialogFra
     private void fetchFlashCardPages(String tableName, String titleText) {
         try {
             List<FlashCard> questions = flashCardServices.getFlashCardContent(tableName, titleText);
-            Log.d("FlashCardRepository", "Questions: " + questions.get(0).getQuestions());
 
             adapter = new FlashcardAdapter(questions);
             viewPager.setAdapter(adapter);
