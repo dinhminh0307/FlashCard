@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -58,6 +59,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
         generateTimeTable();
         loadEventsAndDisplay();
+        onReturnBtn();
     }
 
     /**
@@ -144,6 +146,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
         return tableRow;
     }
+
 
     /**
      * Creates a time cell for the leftmost column.
@@ -471,5 +474,15 @@ public class TimeTableActivity extends AppCompatActivity {
             cell.setBackgroundResource(R.drawable.cell_border);
         }
         selectedCells.clear();
+    }
+
+    private void onReturnBtn() {
+        ImageView returnButn = findViewById(R.id.exitButton);
+        returnButn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }
