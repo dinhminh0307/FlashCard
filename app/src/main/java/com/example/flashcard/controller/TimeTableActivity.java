@@ -3,6 +3,7 @@ package com.example.flashcard.controller;
 import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +16,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.flashcard.R;
+import com.example.flashcard.models.Events;
+import com.example.flashcard.services.EventServices;
+import com.example.flashcard.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +37,13 @@ public class TimeTableActivity extends AppCompatActivity {
     private boolean isSelecting = false;
     private HashSet<TextView> selectedCells = new HashSet<>();
 
+    private EventServices eventServices;
+
+    // Store references to cells for updating
+    private Map<String, TextView> cellMap; // Key: "Day_Time", Value: TextView
+
+    private DateUtils dateUtils;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +51,13 @@ public class TimeTableActivity extends AppCompatActivity {
 
         tableLayout = findViewById(R.id.tableLayout);
         eventsMap = new HashMap<>();
+        dateUtils = new DateUtils();
+        eventServices = new EventServices(this);
+
+        cellMap = new HashMap<>();
 
         generateTimeTable();
+        loadEventsAndDisplay();
     }
 
     /**
@@ -157,7 +173,11 @@ public class TimeTableActivity extends AppCompatActivity {
         cell.setFocusable(true);
 
         // Set tag to identify the cell
-        cell.setTag(day + "_" + timeLabel);
+        String tag = day + "_" + timeLabel;
+        cell.setTag(tag);
+
+        // Add cell to cellMap for easy access
+        cellMap.put(tag, cell);
 
         // Set touch listener
         cell.setOnTouchListener(cellTouchListener);
@@ -357,29 +377,87 @@ public class TimeTableActivity extends AppCompatActivity {
     }
 
     /**
-     * Updates the selected cells with the event name and removes their borders.
+     * Updates the selected cells with the event name, removes their borders, and saves the event to the database.
      *
      * @param eventName The name of the event to display.
      */
     private void updateCellsWithEvent(String eventName) {
+        // Map to group times by day
+        Map<String, List<String>> dayTimesMap = new HashMap<>();
+
         for (TextView cell : selectedCells) {
             cell.setText(eventName);
             // Remove border to indicate the cell is occupied
             cell.setBackgroundColor(Color.TRANSPARENT);
 
-            // Save the event
+            // Retrieve the day and time from the cell's tag
             String tag = (String) cell.getTag();
             String[] parts = tag.split("_");
             String day = parts[0];
             String time = parts[1];
+            time = dateUtils.formatTime(time);
 
+            // Add time to the corresponding day in the map
+            List<String> times = dayTimesMap.getOrDefault(day, new ArrayList<>());
+            times.add(time);
+            dayTimesMap.put(day, times);
+
+            // Update eventsMap (if needed for your application logic)
             Map<String, String> dayEvents = eventsMap.getOrDefault(day, new HashMap<>());
             dayEvents.put(time, eventName);
             eventsMap.put(day, dayEvents);
         }
         // Clear the selection set
         selectedCells.clear();
+
+        // Save events to the database for each day
+        for (Map.Entry<String, List<String>> entry : dayTimesMap.entrySet()) {
+            String day = entry.getKey();
+            List<String> times = entry.getValue();
+
+            Events event = new Events();
+            event.setName(eventName);
+            event.setDate(day); // You may need to map 'day' to an actual date
+            event.setTime(times);
+
+            try {
+                eventServices.saveEventTimeTable(event);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Failed to save event for " + day + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
     }
+
+    /**
+     * Loads events from the database and displays them on the timetable.
+     */
+    private void loadEventsAndDisplay() {
+        List<Events> eventsList = eventServices.getAllEvents();
+        Log.d("TimeTableActivity", "Number of events loaded: " + eventsList.size());
+
+        for (Events event : eventsList) {
+            Log.d("TimeTableActivity", "Event loaded: " + event.getName() + ", Date: " + event.getDate() + ", Times: " + event.getTime());
+
+            String eventName = event.getName();
+            String day = event.getDate(); // Ensure day names are consistent
+            List<String> times = event.getTime();
+
+            for (String time : times) {
+                time = dateUtils.formatTime(time); // Ensure time format consistency
+                String tag = day + "_" + time;
+
+                TextView cell = cellMap.get(tag);
+                if (cell != null) {
+                    cell.setText(eventName);
+                    cell.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    Log.d("TimeTableActivity", "Cell not found for tag: " + tag);
+                }
+            }
+        }
+    }
+
 
     /**
      * Resets the selected cells to their default appearance if event creation is canceled.
