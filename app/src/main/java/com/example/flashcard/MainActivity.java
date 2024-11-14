@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.flashcard.controller.CardPageActivity;
 import com.example.flashcard.controller.ProfilePageActivity;
 import com.example.flashcard.controller.QuizzActivity;
+import com.example.flashcard.controller.TimeTableActivity;
 import com.example.flashcard.dialogs.OptionDialogFragment;
 import com.example.flashcard.exceptions.DatabaseEmptyException;
 import com.example.flashcard.services.FlashCardServices;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
         // Set up the function to navigate to each category
         setupCategoryListeners();
         onProfileClicked();
+        onScheduleClicked();
     }
 
     /**
@@ -109,6 +112,19 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ProfilePageActivity.class);
+
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void onScheduleClicked() {
+        Button timeTableBtn = findViewById(R.id.button);
+
+        timeTableBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TimeTableActivity.class);
 
                 startActivity(intent);
             }

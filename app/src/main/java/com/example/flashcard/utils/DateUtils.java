@@ -10,4 +10,15 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         return formatter.format(calendar.getTime());
     }
+
+    public String formatTime(String time) {
+        try {
+            int hour = Integer.parseInt(time.split(":")[0]);
+            return String.format("%02d:00", hour);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return time;
+        }
+    }
+
 }
