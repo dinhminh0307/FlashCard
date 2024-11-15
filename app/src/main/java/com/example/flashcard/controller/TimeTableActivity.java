@@ -522,7 +522,8 @@ public class TimeTableActivity extends AppCompatActivity implements AddEventsFra
                 TextView cell = cellMap.get(tag);
                 if (cell != null) {
                     cell.setText(eventName);
-                    cell.setBackgroundColor(Color.TRANSPARENT);
+                    cell.setTextColor(Color.WHITE);
+                    cell.setBackgroundColor(Color.argb(255,93,58,141));
                 } else {
                     Log.d("TimeTableActivity", "Cell not found for tag: " + tag);
                 }
