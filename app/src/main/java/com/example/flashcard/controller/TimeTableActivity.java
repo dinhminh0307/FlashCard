@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.flashcard.R;
+import com.example.flashcard.dialogs.AddEventsFragment;
 import com.example.flashcard.models.Events;
 import com.example.flashcard.services.EventServices;
 import com.example.flashcard.utils.DateUtils;
@@ -28,22 +29,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-public class TimeTableActivity extends AppCompatActivity {
+/**
+ * TimeTableActivity manages the display and interaction of a weekly timetable.
+ * Users can add, delete, and view events within the timetable.
+ */
+public class TimeTableActivity extends AppCompatActivity implements AddEventsFragment.AddEventsListener {
 
     private TableLayout tableLayout;
-    private String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-    private Map<String, Map<String, String>> eventsMap; // Map<Day, Map<Time, EventName>>
+    private final String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+    private final Map<String, Map<String, String>> eventsMap = new HashMap<>(); // Map<Day, Map<Time, EventName>>
 
     // Variables to track selection
     private boolean isSelecting = false;
-    private HashSet<TextView> selectedCells = new HashSet<>();
+    private final HashSet<TextView> selectedCells = new HashSet<>();
 
-    private EventServices eventServices;
+    private final EventServices eventServices = new EventServices(this);
 
     // Store references to cells for updating
-    private Map<String, TextView> cellMap; // Key: "Day_Time", Value: TextView
+    private final Map<String, TextView> cellMap = new HashMap<>(); // Key: "Day_Time", Value: TextView
 
-    private DateUtils dateUtils;
+    private final DateUtils dateUtils = new DateUtils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +56,10 @@ public class TimeTableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_time_table);
 
         tableLayout = findViewById(R.id.tableLayout);
-        eventsMap = new HashMap<>();
-        dateUtils = new DateUtils();
-        eventServices = new EventServices(this);
-
-        cellMap = new HashMap<>();
 
         generateTimeTable();
         loadEventsAndDisplay();
-        onReturnBtn();
+        setupReturnButton();
     }
 
     /**
@@ -69,7 +69,7 @@ public class TimeTableActivity extends AppCompatActivity {
         // Add header row with days of the week
         addHeaderRow();
 
-        // Generate time slots from 0h to 24h
+        // Generate time slots from 00:00 to 23:00
         for (int hour = 0; hour < 24; hour++) {
             String timeLabel = String.format("%02d:00", hour);
             TableRow tableRow = createTimeSlotRow(timeLabel);
@@ -114,12 +114,9 @@ public class TimeTableActivity extends AppCompatActivity {
         headerCell.setTypeface(null, android.graphics.Typeface.BOLD);
         headerCell.setPadding(8, 8, 8, 8);
         headerCell.setTextColor(Color.WHITE); // Set text color to white
-        headerCell.setBackgroundResource(R.drawable.header_cell_background); // Use new drawable
+        headerCell.setBackgroundResource(R.drawable.header_cell_background); // Use header background drawable
         return headerCell;
     }
-
-
-
 
     /**
      * Creates a table row for a specific time slot, including time and day cells.
@@ -146,7 +143,6 @@ public class TimeTableActivity extends AppCompatActivity {
 
         return tableRow;
     }
-
 
     /**
      * Creates a time cell for the leftmost column.
@@ -241,6 +237,10 @@ public class TimeTableActivity extends AppCompatActivity {
         }
         // Retrieve the day and time from the cell's tag
         String[] parts = tag.split("_");
+        if (parts.length != 2) {
+            Log.e("TimeTableActivity", "Invalid cell tag format: " + tag);
+            return;
+        }
         String day = parts[0];
         String time = parts[1];
 
@@ -284,7 +284,7 @@ public class TimeTableActivity extends AppCompatActivity {
         try {
             eventServices.deleteEvent(eventName, day, time);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("TimeTableActivity", "Failed to delete event: " + e.getMessage(), e);
             Toast.makeText(this, "Failed to delete event: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return;
         }
@@ -293,7 +293,7 @@ public class TimeTableActivity extends AppCompatActivity {
         cell.setText("");
         cell.setBackgroundResource(R.drawable.cell_border);
 
-        // Remove from eventsMap if necessary
+        // Remove from eventsMap
         Map<String, String> dayEvents = eventsMap.get(day);
         if (dayEvents != null) {
             dayEvents.remove(time);
@@ -302,7 +302,6 @@ public class TimeTableActivity extends AppCompatActivity {
             }
         }
     }
-
 
     /**
      * Handles the ACTION_DOWN touch event.
@@ -409,100 +408,81 @@ public class TimeTableActivity extends AppCompatActivity {
     }
 
     /**
-     * Displays a dialog for creating an event with the selected time slots.
+     * Displays the AddEventsFragment dialog for creating an event.
      */
     private void showCreateEventDialogForSelection() {
-        // Collect day and time information from selected cells
-        List<String> selectedTags = new ArrayList<>();
+        // Collect selected tags
+        List<String> selectedTagsList = new ArrayList<>();
         for (TextView cell : selectedCells) {
-            selectedTags.add((String) cell.getTag());
+            String tag = (String) cell.getTag();
+            if (tag != null) {
+                selectedTagsList.add(tag);
+            }
         }
 
-        // Sort the selected tags for consistent display
-        Collections.sort(selectedTags);
-
-        // Build a summary of selected time slots
-        StringBuilder timeSlots = new StringBuilder();
-        for (String tag : selectedTags) {
-            String[] parts = tag.split("_");
-            String day = parts[0];
-            String time = parts[1];
-            timeSlots.append(day).append(" at ").append(time).append("\n");
-        }
-
-        // Show the event creation dialog
-        createEventDialog(timeSlots.toString());
+        // Create and show the AddEventsFragment
+        AddEventsFragment addEventsFragment = AddEventsFragment.newInstance(selectedTagsList);
+        addEventsFragment.show(getSupportFragmentManager(), "AddEventsFragment");
     }
 
     /**
-     * Creates and displays the event creation dialog.
+     * Callback method when an event is created from the AddEventsFragment.
      *
-     * @param timeSlotsSummary A summary of the selected time slots.
+     * @param eventName    The name of the created event.
+     * @param selectedTags The list of selected time slot tags.
      */
-    private void createEventDialog(String timeSlotsSummary) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Create Event");
-        builder.setMessage("Create an event for the following time slots?\n" + timeSlotsSummary);
-
-        // Input field for event name
-        final EditText input = new EditText(this);
-        input.setHint("Event Name");
-        builder.setView(input);
-
-        builder.setPositiveButton("Create", (dialog, which) -> {
-            String eventName = input.getText().toString().trim();
-            if (!eventName.isEmpty()) {
-                updateCellsWithEvent(eventName);
-                Toast.makeText(this, "Event '" + eventName + "' created.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Event name cannot be empty.", Toast.LENGTH_SHORT).show();
-                resetSelectedCells();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            resetSelectedCells();
-        });
-
-        builder.show();
+    @Override
+    public void onEventCreated(String eventName, List<String> selectedTags) {
+        updateCellsWithEvent(eventName, selectedTags);
+        Toast.makeText(this, "Event '" + eventName + "' created.", Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Updates the selected cells with the event name, removes their borders, and saves the event to the database.
      *
-     * @param eventName The name of the event to display.
+     * @param eventName    The name of the event to display.
+     * @param selectedTags The list of selected cell tags representing time slots.
      */
-    private void updateCellsWithEvent(String eventName) {
+    private void updateCellsWithEvent(String eventName, List<String> selectedTags) {
         // Map to group times by day
         Map<String, List<String>> dayTimesMap = new HashMap<>();
 
-        for (TextView cell : selectedCells) {
-            cell.setText(eventName);
-            // Remove border to indicate the cell is occupied
-            cell.setBackgroundColor(Color.TRANSPARENT);
+        for (String tag : selectedTags) {
+            TextView cell = cellMap.get(tag);
+            if (cell != null) {
+                cell.setText(eventName);
+                // Remove border to indicate the cell is occupied
+                cell.setBackgroundColor(Color.TRANSPARENT);
 
-            // Retrieve the day and time from the cell's tag
-            String tag = (String) cell.getTag();
-            String[] parts = tag.split("_");
-            String day = parts[0];
-            String time = parts[1];
-            time = dateUtils.formatTime(time);
+                // Retrieve the day and time from the cell's tag
+                String[] parts = tag.split("_");
+                if (parts.length != 2) {
+                    Log.e("TimeTableActivity", "Invalid tag format: " + tag);
+                    continue;
+                }
 
-            // Add time to the corresponding day in the map
-            List<String> times = dayTimesMap.getOrDefault(day, new ArrayList<>());
-            times.add(time);
-            dayTimesMap.put(day, times);
+                String day = parts[0];
+                String time = parts[1];
+                time = dateUtils.formatTime(time);
 
-            // Update eventsMap (if needed for your application logic)
-            Map<String, String> dayEvents = eventsMap.getOrDefault(day, new HashMap<>());
-            dayEvents.put(time, eventName);
-            eventsMap.put(day, dayEvents);
+                // Add time to the corresponding day in the map
+                List<String> times = dayTimesMap.getOrDefault(day, new ArrayList<>());
+                times.add(time);
+                dayTimesMap.put(day, times);
+
+                // Update eventsMap
+                Map<String, String> dayEvents = eventsMap.getOrDefault(day, new HashMap<>());
+                dayEvents.put(time, eventName);
+                eventsMap.put(day, dayEvents);
+            } else {
+                Log.e("TimeTableActivity", "Cell not found for tag: " + tag);
+            }
         }
+
         // Clear the selection set
-        selectedCells.clear();
+        resetSelectedCells();
 
         // Save events to the database for each day
-        // Inside the loop for saving events to the database
         for (Map.Entry<String, List<String>> entry : dayTimesMap.entrySet()) {
             String day = entry.getKey();
             List<String> times = entry.getValue();
@@ -515,11 +495,10 @@ public class TimeTableActivity extends AppCompatActivity {
             try {
                 eventServices.saveEventTimeTable(event);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("TimeTableActivity", "Failed to save event: " + e.getMessage(), e);
                 Toast.makeText(this, "Failed to save event for " + day + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
-
     }
 
     /**
@@ -551,7 +530,6 @@ public class TimeTableActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * Resets the selected cells to their default appearance if event creation is canceled.
      */
@@ -562,13 +540,11 @@ public class TimeTableActivity extends AppCompatActivity {
         selectedCells.clear();
     }
 
-    private void onReturnBtn() {
-        ImageView returnButn = findViewById(R.id.exitButton);
-        returnButn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+    /**
+     * Sets up the return button to finish the activity when clicked.
+     */
+    private void setupReturnButton() {
+        ImageView returnButton = findViewById(R.id.exitButton);
+        returnButton.setOnClickListener(v -> finish());
     }
 }

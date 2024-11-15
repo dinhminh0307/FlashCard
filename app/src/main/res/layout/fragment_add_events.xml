@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialogCreateEvent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    tools:context=".dialogs.AddEventsFragment">
+
+    <TextView
+        android:id="@+id/textViewSummaryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected Time Slots:"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:paddingBottom="8dp"
+        android:contentDescription="Label for selected time slots" />
+
+    <TextView
+        android:id="@+id/textViewTimeSlotsSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Time slots will be listed here."
+        android:paddingBottom="16dp"
+        android:contentDescription="Summary of selected time slots"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/editTextEventName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Event Name"
+        android:inputType="textPersonName"
+        android:contentDescription="Input field for event name" />
+</LinearLayout>
