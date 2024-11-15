@@ -1,13 +1,11 @@
 package com.example.flashcard.controller;
 
-import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -18,12 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.flashcard.R;
 import com.example.flashcard.dialogs.AddEventsFragment;
+import com.example.flashcard.dialogs.DeleteEventsFragment;
 import com.example.flashcard.models.Events;
 import com.example.flashcard.services.EventServices;
 import com.example.flashcard.utils.DateUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +31,9 @@ import java.util.Map;
  * TimeTableActivity manages the display and interaction of a weekly timetable.
  * Users can add, delete, and view events within the timetable.
  */
-public class TimeTableActivity extends AppCompatActivity implements AddEventsFragment.AddEventsListener {
+public class TimeTableActivity extends AppCompatActivity implements
+        AddEventsFragment.AddEventsListener,
+        DeleteEventsFragment.DeleteEventsListener {
 
     private TableLayout tableLayout;
     private final String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
@@ -244,12 +244,12 @@ public class TimeTableActivity extends AppCompatActivity implements AddEventsFra
         String day = parts[0];
         String time = parts[1];
 
-        // Show confirmation dialog
+        // Show confirmation dialog using DeleteEventsFragment
         showDeleteEventDialog(cell, eventName, day, time);
     }
 
     /**
-     * Shows a confirmation dialog to delete an event.
+     * Launches the DeleteEventsFragment to confirm event deletion.
      *
      * @param cell      The cell containing the event.
      * @param eventName The name of the event.
@@ -257,18 +257,29 @@ public class TimeTableActivity extends AppCompatActivity implements AddEventsFra
      * @param time      The time of the event.
      */
     private void showDeleteEventDialog(TextView cell, String eventName, String day, String time) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Delete Event");
-        builder.setMessage("Do you want to delete the event '" + eventName + "' on " + day + " at " + time + "?");
+        DeleteEventsFragment deleteEventsFragment = DeleteEventsFragment.newInstance(eventName, day, time);
+        deleteEventsFragment.show(getSupportFragmentManager(), "DeleteEventsFragment");
+    }
 
-        builder.setPositiveButton("Delete", (dialog, which) -> {
+    /**
+     * Handles the deletion of an event after user confirmation.
+     *
+     * @param eventName The name of the event to delete.
+     * @param day       The day of the event.
+     * @param time      The time of the event.
+     */
+    @Override
+    public void onDeleteConfirmed(String eventName, String day, String time) {
+        // Retrieve the corresponding cell
+        String tag = day + "_" + time;
+        TextView cell = cellMap.get(tag);
+        if (cell != null) {
+            // Delete the event from the database and update the UI
             deleteEvent(cell, eventName, day, time);
-            Toast.makeText(this, "Event '" + eventName + "' deleted.", Toast.LENGTH_SHORT).show();
-        });
-
-        builder.setNegativeButton("Cancel", null);
-
-        builder.show();
+        } else {
+            Log.e("TimeTableActivity", "Cell not found for tag: " + tag);
+            Toast.makeText(this, "Failed to delete event: Cell not found.", Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -301,6 +312,8 @@ public class TimeTableActivity extends AppCompatActivity implements AddEventsFra
                 eventsMap.remove(day);
             }
         }
+
+        Toast.makeText(this, "Event '" + eventName + "' deleted.", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -451,8 +464,9 @@ public class TimeTableActivity extends AppCompatActivity implements AddEventsFra
             TextView cell = cellMap.get(tag);
             if (cell != null) {
                 cell.setText(eventName);
+                cell.setTextColor(Color.WHITE); // Set text color to white for visibility
                 // Remove border to indicate the cell is occupied
-                cell.setBackgroundColor(Color.TRANSPARENT);
+                cell.setBackgroundColor(Color.argb(255, 93, 58, 141)); // Example: Purple color
 
                 // Retrieve the day and time from the cell's tag
                 String[] parts = tag.split("_");
@@ -523,7 +537,7 @@ public class TimeTableActivity extends AppCompatActivity implements AddEventsFra
                 if (cell != null) {
                     cell.setText(eventName);
                     cell.setTextColor(Color.WHITE);
-                    cell.setBackgroundColor(Color.argb(255,93,58,141));
+                    cell.setBackgroundColor(Color.argb(255, 93, 58, 141)); // Example: Purple color
                 } else {
                     Log.d("TimeTableActivity", "Cell not found for tag: " + tag);
                 }
