@@ -22,4 +22,8 @@ public class EventServices {
     public List<Events> getAllEvents() {
         return eventsRepository.getAllEvents();
     }
+
+    public void deleteEvent(String name, String date, String time) throws Exception {
+        eventsRepository.deleteEventTimeSlot(name, date, time);
+    }
 }

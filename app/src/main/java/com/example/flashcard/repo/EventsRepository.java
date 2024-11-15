@@ -8,11 +8,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.flashcard.models.Events;
+import com.example.flashcard.exceptions.NoResourceFound;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EventsRepository extends SQLiteOpenHelper {
@@ -61,8 +63,6 @@ public class EventsRepository extends SQLiteOpenHelper {
         // For now, do nothing to preserve data
     }
 
-
-
     /**
      * Inserts an event into the database.
      *
@@ -89,7 +89,6 @@ public class EventsRepository extends SQLiteOpenHelper {
         }
     }
 
-
     /**
      * Retrieves all events from the database.
      *
@@ -106,16 +105,14 @@ public class EventsRepository extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     // Get column indexes safely
-                    int idIndex = cursor.getColumnIndex(COLUMN_ID);
                     int nameIndex = cursor.getColumnIndex(COLUMN_NAME);
                     int dateIndex = cursor.getColumnIndex(COLUMN_DATE);
                     int timesIndex = cursor.getColumnIndex(COLUMN_TIMES);
 
-                    if (idIndex == -1 || nameIndex == -1 || dateIndex == -1 || timesIndex == -1) {
-                        throw new IllegalArgumentException("One or more columns not found in the table " + TABLE_EVENTS);
+                    if (nameIndex == -1 || dateIndex == -1 || timesIndex == -1) {
+                        throw new IllegalArgumentException("One or more columns not found in table " + TABLE_EVENTS);
                     }
 
-                    int id = cursor.getInt(idIndex);
                     String name = cursor.getString(nameIndex);
                     String date = cursor.getString(dateIndex);
                     String timesJson = cursor.getString(timesIndex);
@@ -135,77 +132,69 @@ public class EventsRepository extends SQLiteOpenHelper {
     }
 
     /**
-     * Retrieves events for a specific date.
+     * Deletes a specific time slot from an event. If no time slots remain, deletes the entire event.
      *
-     * @param date The date to filter events by.
-     * @return A list of Events occurring on the specified date.
+     * @param name The name of the event.
+     * @param date The date of the event.
+     * @param time The specific time slot to delete.
+     * @throws Exception If the event is not found or any database error occurs.
      */
-    public List<Events> getEventsByDate(String date) {
-        List<Events> eventsList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
+    public void deleteEventTimeSlot(String name, String date, String time) throws Exception {
+        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
 
         try {
-            cursor = db.query(TABLE_EVENTS,
-                    null,
-                    COLUMN_DATE + " = ?",
-                    new String[]{date},
-                    null,
-                    null,
-                    null);
+            // Fetch the event
+            String selectQuery = "SELECT " + COLUMN_TIMES + " FROM " + TABLE_EVENTS
+                    + " WHERE " + COLUMN_NAME + " = ? AND " + COLUMN_DATE + " = ?";
+            cursor = db.rawQuery(selectQuery, new String[]{name, date});
 
             if (cursor.moveToFirst()) {
-                do {
-                    // Get column indexes safely
-                    int nameIndex = cursor.getColumnIndex(COLUMN_NAME);
-                    int timesIndex = cursor.getColumnIndex(COLUMN_TIMES);
+                // Use getColumnIndexOrThrow for better error messages
+                String timesJson = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TIMES));
+                List<String> times = jsonToTimesList(timesJson);
 
-                    if (nameIndex == -1 || timesIndex == -1) {
-                        throw new IllegalArgumentException("One or more columns not found in the table " + TABLE_EVENTS);
+                // Remove the specific time
+                boolean removed = times.remove(time);
+                if (!removed) {
+                    throw new Exception("Time slot not found in the event.");
+                }
+
+                if (times.isEmpty()) {
+                    // Delete the entire event
+                    int rowsDeleted = db.delete(TABLE_EVENTS,
+                            COLUMN_NAME + " = ? AND " + COLUMN_DATE + " = ?",
+                            new String[]{name, date});
+                    if (rowsDeleted == 0) {
+                        throw new Exception("Failed to delete the event.");
                     }
+                } else {
+                    // Update the event with remaining times
+                    ContentValues values = new ContentValues();
+                    values.put(COLUMN_TIMES, timesListToJson(times));
 
-                    String name = cursor.getString(nameIndex);
-                    String timesJson = cursor.getString(timesIndex);
-
-                    List<String> times = jsonToTimesList(timesJson);
-                    Events event = new Events(name, date, times);
-                    eventsList.add(event);
-                } while (cursor.moveToNext());
+                    int rowsUpdated = db.update(TABLE_EVENTS, values,
+                            COLUMN_NAME + " = ? AND " + COLUMN_DATE + " = ?",
+                            new String[]{name, date});
+                    if (rowsUpdated == 0) {
+                        throw new Exception("Failed to update the event.");
+                    }
+                }
+            } else {
+                throw new Exception("Event not found.");
             }
+        } catch (IllegalArgumentException e) {
+            Log.e("EventsRepository", "Column not found: " + COLUMN_TIMES, e);
+            throw new Exception("Database schema error.", e);
         } catch (Exception e) {
-            Log.e("EventsRepository", "Error retrieving events by date: " + date, e);
+            Log.e("EventsRepository", "Error deleting event time slot", e);
+            throw e;
         } finally {
             if (cursor != null) cursor.close();
             db.close();
         }
-        return eventsList;
     }
 
-    /**
-     * Deletes an event by its name and date.
-     *
-     * @param name The name of the event.
-     * @param date The date of the event.
-     */
-    public void deleteEvent(String name, String date) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        try {
-            int rowsDeleted = db.delete(TABLE_EVENTS,
-                    COLUMN_NAME + " = ? AND " + COLUMN_DATE + " = ?",
-                    new String[]{name, date});
-
-            if (rowsDeleted == 0) {
-                Log.d("EventsRepository", "No events found with name: " + name + " and date: " + date);
-                throw new NoSuchFieldException("No event found");
-            } else {
-                Log.d("EventsRepository", "Event deleted successfully with name: " + name + " and date: " + date);
-            }
-        } catch (Exception e) {
-            Log.e("EventsRepository", "Error deleting event with name " + name + " and date " + date, e);
-        } finally {
-            db.close();
-        }
-    }
 
     /**
      * Checks if an event exists for a specific date and time.
@@ -233,7 +222,7 @@ public class EventsRepository extends SQLiteOpenHelper {
                     int timesIndex = cursor.getColumnIndex(COLUMN_TIMES);
 
                     if (timesIndex == -1) {
-                        throw new IllegalArgumentException("Column '" + COLUMN_TIMES + "' not found in the table " + TABLE_EVENTS);
+                        throw new IllegalArgumentException("Column '" + COLUMN_TIMES + "' not found in table " + TABLE_EVENTS);
                     }
 
                     String timesJson = cursor.getString(timesIndex);

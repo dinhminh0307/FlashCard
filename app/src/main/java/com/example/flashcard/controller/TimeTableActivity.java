@@ -202,16 +202,24 @@ public class TimeTableActivity extends AppCompatActivity {
 
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
-                    handleActionDown(cell);
+                    if (cell.getText().toString().isEmpty()) {
+                        handleActionDown(cell);
+                    } else {
+                        handleEventCellClick(cell);
+                    }
                     return true;
 
                 case MotionEvent.ACTION_MOVE:
-                    handleActionMove(event);
+                    if (isSelecting) {
+                        handleActionMove(event);
+                    }
                     return true;
 
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    handleActionUp();
+                    if (isSelecting) {
+                        handleActionUp();
+                    }
                     return true;
 
                 default:
@@ -219,6 +227,82 @@ public class TimeTableActivity extends AppCompatActivity {
             }
         }
     };
+
+    /**
+     * Handles the click event on a cell that already contains an event.
+     *
+     * @param cell The cell that was clicked.
+     */
+    private void handleEventCellClick(TextView cell) {
+        String eventName = cell.getText().toString();
+        String tag = (String) cell.getTag();
+        if (tag == null) {
+            return;
+        }
+        // Retrieve the day and time from the cell's tag
+        String[] parts = tag.split("_");
+        String day = parts[0];
+        String time = parts[1];
+
+        // Show confirmation dialog
+        showDeleteEventDialog(cell, eventName, day, time);
+    }
+
+    /**
+     * Shows a confirmation dialog to delete an event.
+     *
+     * @param cell      The cell containing the event.
+     * @param eventName The name of the event.
+     * @param day       The day of the event.
+     * @param time      The time of the event.
+     */
+    private void showDeleteEventDialog(TextView cell, String eventName, String day, String time) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Event");
+        builder.setMessage("Do you want to delete the event '" + eventName + "' on " + day + " at " + time + "?");
+
+        builder.setPositiveButton("Delete", (dialog, which) -> {
+            deleteEvent(cell, eventName, day, time);
+            Toast.makeText(this, "Event '" + eventName + "' deleted.", Toast.LENGTH_SHORT).show();
+        });
+
+        builder.setNegativeButton("Cancel", null);
+
+        builder.show();
+    }
+
+    /**
+     * Deletes the event from the database and updates the UI.
+     *
+     * @param cell      The cell containing the event.
+     * @param eventName The name of the event.
+     * @param day       The day of the event.
+     * @param time      The time of the event.
+     */
+    private void deleteEvent(TextView cell, String eventName, String day, String time) {
+        // Remove the event from the database
+        try {
+            eventServices.deleteEvent(eventName, day, time);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to delete event: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Update the UI
+        cell.setText("");
+        cell.setBackgroundResource(R.drawable.cell_border);
+
+        // Remove from eventsMap if necessary
+        Map<String, String> dayEvents = eventsMap.get(day);
+        if (dayEvents != null) {
+            dayEvents.remove(time);
+            if (dayEvents.isEmpty()) {
+                eventsMap.remove(day);
+            }
+        }
+    }
+
 
     /**
      * Handles the ACTION_DOWN touch event.
@@ -418,13 +502,14 @@ public class TimeTableActivity extends AppCompatActivity {
         selectedCells.clear();
 
         // Save events to the database for each day
+        // Inside the loop for saving events to the database
         for (Map.Entry<String, List<String>> entry : dayTimesMap.entrySet()) {
             String day = entry.getKey();
             List<String> times = entry.getValue();
 
             Events event = new Events();
             event.setName(eventName);
-            event.setDate(day); // You may need to map 'day' to an actual date
+            event.setDate(day);
             event.setTime(times);
 
             try {
@@ -434,6 +519,7 @@ public class TimeTableActivity extends AppCompatActivity {
                 Toast.makeText(this, "Failed to save event for " + day + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+
     }
 
     /**
