@@ -19,6 +19,7 @@ import com.example.flashcard.dialogs.OptionDialogFragment;
 import com.example.flashcard.exceptions.DatabaseEmptyException;
 import com.example.flashcard.services.FlashCardServices;
 import com.example.flashcard.services.RecordServices;
+import com.example.flashcard.threads.ThreadTasks;
 import com.example.flashcard.utils.Constant;
 
 public class MainActivity extends AppCompatActivity implements OptionDialogFragment.OptionDialogListener {
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
 
     private RecordServices recordServices;
 
+    private ThreadTasks threadTasks;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
 
         flashCardServices = new FlashCardServices(this);
         flashCardServices.initDB();
+        threadTasks = new ThreadTasks(this);
+        threadTasks.runThread();
         // Set up the function to navigate to each category
         setupCategoryListeners();
         onProfileClicked();
