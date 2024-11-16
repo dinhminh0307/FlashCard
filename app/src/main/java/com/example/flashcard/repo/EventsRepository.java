@@ -328,6 +328,8 @@ public class EventsRepository extends SQLiteOpenHelper {
             String selection = COLUMN_DATE + " = ?";
             String[] selectionArgs = {date};
 
+            Log.d("EventsRepository", "Querying events with date: " + date);
+
             // Query the database
             cursor = db.query(
                     TABLE_EVENTS,   // The table to query
@@ -338,6 +340,10 @@ public class EventsRepository extends SQLiteOpenHelper {
                     null,           // Having
                     null            // Order by
             );
+
+            // Log the number of results
+            int count = cursor.getCount();
+            Log.d("EventsRepository", "Number of events found: " + count);
 
             // Iterate through the results and construct Events objects
             if (cursor.moveToFirst()) {
@@ -351,11 +357,14 @@ public class EventsRepository extends SQLiteOpenHelper {
                     String eventDate = cursor.getString(dateIndex);
                     String timesJson = cursor.getString(timesIndex);
 
-                    List<String> times = jsonToTimesList(timesJson);
+                    Log.d("EventsRepository", "Retrieved event: Name=" + name + ", Date=" + eventDate + ", Times=" + timesJson);
 
+                    List<String> times = jsonToTimesList(timesJson);
                     Events event = new Events(name, eventDate, times);
                     eventsList.add(event);
                 } while (cursor.moveToNext());
+            } else {
+                Log.d("EventsRepository", "No events found for date: " + date);
             }
         } catch (IllegalArgumentException e) {
             Log.e("EventsRepository", "Column not found while retrieving events by date.", e);
@@ -373,7 +382,10 @@ public class EventsRepository extends SQLiteOpenHelper {
             }
         }
 
+        Log.d("EventsRepository", "Total events retrieved: " + eventsList.size());
+
         return eventsList;
     }
+
 
 }

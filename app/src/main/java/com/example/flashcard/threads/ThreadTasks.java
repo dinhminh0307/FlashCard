@@ -16,6 +16,8 @@ public class ThreadTasks {
     private EventServices eventServices;
     private Context context;
 
+    List<Events> events;
+
     /**
      * Constructor for ThreadTasks.
      *
@@ -42,13 +44,16 @@ public class ThreadTasks {
 
                         // Example usage of EventServices within the thread
                         String date = currentDate.getDayOfWeeks(); // Replace with dynamic date as needed
-                        List<Events> events = eventServices.getEventsByDateService(date);
-
+                        events = eventServices.getEventsByDateService(date);
+                        if(events.isEmpty()) {
+                            Log.d("ThreadTasks", "Current Date and Time: " + currentDate.getDayOfWeeks() + " " + currentDate.getTime());
+                        }
                         // Log the retrieved events
                         for (Events event : events) {
+                            // if the current date before the schedule 30 min
                             Log.d("ThreadTasks", "Event: " + event.getName() + ", Date: " + event.getDate() + ", Times: " + event.getTime());
                         }
-
+                        Thread.sleep(2000); // Sleep for 2 seconds to simulate a delay
                         // If you need to update the UI, consider using a Handler or other mechanisms
                     } catch (InterruptedException e) {
                         Log.e("ThreadTasks", "Thread was interrupted", e);
@@ -69,7 +74,7 @@ public class ThreadTasks {
      */
     private void getCurrentDate() throws InterruptedException {
         currentDate = dateUtils.getCurrentDateAndTime();
-        Log.d("ThreadTasks", "Current Date and Time: " + currentDate.getDayOfWeeks() + " " + currentDate.getTime());
-        Thread.sleep(2000); // Sleep for 2 seconds to simulate a delay
+        //Log.d("ThreadTasks", "Current Date and Time: " + currentDate.getDayOfWeeks() + " " + currentDate.getTime());
+
     }
 }
