@@ -38,6 +38,28 @@ public class DateUtils {
         return  currentDate;
     }
 
+    public String mapDay(String day) {
+        switch (day.toUpperCase()) {
+            case "MONDAY":
+                return "Monday";
+            case "TUESDAY":
+                return "Tuesday";
+            case "WEDNESDAY":
+                return "Wednesday";
+            case "THURSDAY":
+                return "Thursday";
+            case "FRIDAY":
+                return "Friday";
+            case "SATURDAY":
+                return "Saturday";
+            case "SUNDAY":
+                return "Sunday";
+            default:
+                throw new IllegalArgumentException("Invalid day: " + day);
+        }
+    }
+
+
     public ScheduleDate convertStringToTime(String time) {
         String[] parts = time.split(":");
         int hour = Integer.parseInt(parts[0]);

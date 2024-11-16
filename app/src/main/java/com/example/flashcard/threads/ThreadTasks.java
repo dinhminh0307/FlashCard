@@ -44,6 +44,7 @@ public class ThreadTasks {
 
                         // Example usage of EventServices within the thread
                         String date = currentDate.getDayOfWeeks(); // Replace with dynamic date as needed
+                        date = dateUtils.mapDay(date);
                         events = eventServices.getEventsByDateService(date);
                         if(events.isEmpty()) {
                             Log.d("ThreadTasks", "Current Date and Time: " + currentDate.getDayOfWeeks() + " " + currentDate.getTime());
@@ -77,4 +78,5 @@ public class ThreadTasks {
         //Log.d("ThreadTasks", "Current Date and Time: " + currentDate.getDayOfWeeks() + " " + currentDate.getTime());
 
     }
+
 }
