@@ -26,6 +26,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -39,6 +40,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
     // MPAndroidChart Dependency
     implementation("com.github.PhilJay:MPAndroidChart:3.1.0")

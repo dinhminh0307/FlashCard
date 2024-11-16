@@ -4,6 +4,12 @@ package com.example.flashcard.utils;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 
+import com.example.flashcard.models.ScheduleDate;
+import com.google.android.material.timepicker.TimeFormat;
+
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+
 public class DateUtils {
     public String getDate() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -21,4 +27,24 @@ public class DateUtils {
         }
     }
 
+    public ScheduleDate getCurrentDateAndTime() {
+        LocalDateTime now = LocalDateTime.now();
+        // Get the current day of the week
+        DayOfWeek dayOfWeek = now.getDayOfWeek();
+        String day = dayOfWeek.toString();
+        int hour = now.getHour();
+        int mins = now.getMinute();
+        ScheduleDate currentDate = new ScheduleDate(day, hour, mins);
+        return  currentDate;
+    }
+
+    public ScheduleDate convertStringToTime(String time) {
+        String[] parts = time.split(":");
+        int hour = Integer.parseInt(parts[0]);
+        int mins = Integer.parseInt(parts[1]);
+        ScheduleDate convertedDate = new ScheduleDate();
+        convertedDate.setHour(hour);
+        convertedDate.setMins(mins);
+        return convertedDate;
+    }
 }
