@@ -36,7 +36,8 @@ public class TimeTableActivity extends AppCompatActivity implements
         DeleteEventsFragment.DeleteEventsListener {
 
     private TableLayout tableLayout;
-    private final String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+    // Updated to include Saturday and Sunday
+    private final String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     private final Map<String, Map<String, String>> eventsMap = new HashMap<>(); // Map<Day, Map<Time, EventName>>
 
     // Variables to track selection
@@ -112,7 +113,7 @@ public class TimeTableActivity extends AppCompatActivity implements
         headerCell.setText(text);
         headerCell.setGravity(Gravity.CENTER);
         headerCell.setTypeface(null, android.graphics.Typeface.BOLD);
-        headerCell.setPadding(8, 8, 8, 8);
+        headerCell.setPadding(4, 4, 4, 4); // Reduced padding from 8dp to 4dp
         headerCell.setTextColor(Color.WHITE); // Set text color to white
         headerCell.setBackgroundResource(R.drawable.header_cell_background); // Use header background drawable
         return headerCell;
@@ -126,12 +127,12 @@ public class TimeTableActivity extends AppCompatActivity implements
      */
     private TableRow createTimeSlotRow(String timeLabel) {
         TableRow tableRow = new TableRow(this);
-        tableRow.setPadding(0, 0, 0, 0); // Ensure no extra padding
-        tableRow.setLayoutParams(new TableLayout.LayoutParams(
-                TableLayout.LayoutParams.MATCH_PARENT,
-                TableLayout.LayoutParams.WRAP_CONTENT));
+        tableRow.setLayoutParams(new TableRow.LayoutParams(
+                TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT
+        ));
 
-        // Time cell
+        // Time cell (leftmost)
         TextView timeTextView = createTimeCell(timeLabel);
         tableRow.addView(timeTextView);
 
@@ -144,6 +145,7 @@ public class TimeTableActivity extends AppCompatActivity implements
         return tableRow;
     }
 
+
     /**
      * Creates a time cell for the leftmost column.
      *
@@ -154,10 +156,19 @@ public class TimeTableActivity extends AppCompatActivity implements
         TextView timeCell = new TextView(this);
         timeCell.setText(timeLabel);
         timeCell.setGravity(Gravity.CENTER);
-        timeCell.setPadding(8, 8, 8, 8);
+        timeCell.setPadding(4, 4, 4, 4);
         timeCell.setBackgroundResource(R.drawable.cell_border);
+
+        // Use a fixed width for the time column
+        TableRow.LayoutParams timeCellParams = new TableRow.LayoutParams(
+                150, // Fixed width in pixels or dp
+                TableRow.LayoutParams.WRAP_CONTENT
+        );
+        timeCell.setLayoutParams(timeCellParams);
+
         return timeCell;
     }
+
 
     /**
      * Creates a cell for a specific day and time.
@@ -171,15 +182,21 @@ public class TimeTableActivity extends AppCompatActivity implements
         cell.setId(View.generateViewId());
         cell.setBackgroundResource(R.drawable.cell_border);
         cell.setGravity(Gravity.CENTER);
-        cell.setPadding(8, 8, 8, 8);
-        cell.setClickable(true);
-        cell.setFocusable(true);
+        cell.setPadding(4, 4, 4, 4);
+
+        // Set layout parameters to use equal weights
+        TableRow.LayoutParams cellParams = new TableRow.LayoutParams(
+                0,  // Set width to 0dp to rely on weight
+                TableRow.LayoutParams.WRAP_CONTENT,
+                1.0f // Weight for even distribution
+        );
+        cell.setLayoutParams(cellParams);
 
         // Set tag to identify the cell
         String tag = day + "_" + timeLabel;
         cell.setTag(tag);
 
-        // Add cell to cellMap for easy access
+        // Add to cellMap for easier updates later
         cellMap.put(tag, cell);
 
         // Set touch listener
@@ -187,6 +204,7 @@ public class TimeTableActivity extends AppCompatActivity implements
 
         return cell;
     }
+
 
     /**
      * Touch listener for the timetable cells to handle multi-selection.
@@ -463,10 +481,15 @@ public class TimeTableActivity extends AppCompatActivity implements
         for (String tag : selectedTags) {
             TextView cell = cellMap.get(tag);
             if (cell != null) {
+                // Update the cell with the event name and background color
                 cell.setText(eventName);
-                cell.setTextColor(Color.WHITE); // Set text color to white for visibility
-                // Remove border to indicate the cell is occupied
-                cell.setBackgroundColor(Color.argb(255, 93, 58, 141)); // Example: Purple color
+                cell.setTextColor(Color.WHITE); // Ensure text is visible
+                cell.post(() -> cell.setBackgroundColor(Color.argb(255, 93, 58, 141)));
+
+
+                // Force UI refresh for the updated cell
+                cell.invalidate(); // Redraw the cell
+                cell.requestLayout(); // Recalculate its layout if needed
 
                 // Retrieve the day and time from the cell's tag
                 String[] parts = tag.split("_");
@@ -515,6 +538,8 @@ public class TimeTableActivity extends AppCompatActivity implements
         }
     }
 
+
+
     /**
      * Loads events from the database and displays them on the timetable.
      */
@@ -537,7 +562,7 @@ public class TimeTableActivity extends AppCompatActivity implements
                 if (cell != null) {
                     cell.setText(eventName);
                     cell.setTextColor(Color.WHITE);
-                    cell.setBackgroundColor(Color.argb(255, 93, 58, 141)); // Example: Purple color
+                    cell.setBackgroundColor(Color.argb(255, 93, 58, 141));
                 } else {
                     Log.d("TimeTableActivity", "Cell not found for tag: " + tag);
                 }

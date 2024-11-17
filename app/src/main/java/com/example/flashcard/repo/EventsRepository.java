@@ -305,4 +305,87 @@ public class EventsRepository extends SQLiteOpenHelper {
             db.close();
         }
     }
+
+    /**
+     * Retrieves all events that occur on the specified date.
+     *
+     * @param date The date for which to retrieve events (e.g., "2024-04-27").
+     * @return A list of Events objects occurring on the specified date.
+     * @throws Exception If any database error occurs.
+     */
+    public List<Events> getEventsByDate(String date) throws Exception {
+        List<Events> eventsList = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            db = this.getReadableDatabase();
+
+            // Define the columns to retrieve
+            String[] columns = {COLUMN_NAME, COLUMN_DATE, COLUMN_TIMES};
+
+            // Define the selection criteria
+            String selection = COLUMN_DATE + " = ?";
+            String[] selectionArgs = {date};
+
+            Log.d("EventsRepository", "Querying events with date: " + date);
+
+            // Query the database
+            cursor = db.query(
+                    TABLE_EVENTS,   // The table to query
+                    columns,        // The columns to return
+                    selection,      // The columns for the WHERE clause
+                    selectionArgs,  // The values for the WHERE clause
+                    null,           // Group by
+                    null,           // Having
+                    null            // Order by
+            );
+
+            // Log the number of results
+            int count = cursor.getCount();
+            Log.d("EventsRepository", "Number of events found: " + count);
+
+            // Iterate through the results and construct Events objects
+            if (cursor.moveToFirst()) {
+                do {
+                    // Retrieve column indices safely
+                    int nameIndex = cursor.getColumnIndexOrThrow(COLUMN_NAME);
+                    int dateIndex = cursor.getColumnIndexOrThrow(COLUMN_DATE);
+                    int timesIndex = cursor.getColumnIndexOrThrow(COLUMN_TIMES);
+
+                    String name = cursor.getString(nameIndex);
+                    String eventDate = cursor.getString(dateIndex);
+                    String timesJson = cursor.getString(timesIndex);
+
+                    Log.d("EventsRepository", "Retrieved event: Name=" + name + ", Date=" + eventDate + ", Times=" + timesJson);
+
+                    List<String> times = jsonToTimesList(timesJson);
+                    Events event = new Events(name, eventDate, times);
+                    eventsList.add(event);
+                } while (cursor.moveToNext());
+            } else {
+                Log.d("EventsRepository", "No events found for date: " + date);
+            }
+        } catch (IllegalArgumentException e) {
+            Log.e("EventsRepository", "Column not found while retrieving events by date.", e);
+            throw new Exception("Database schema error.", e);
+        } catch (Exception e) {
+            Log.e("EventsRepository", "Error retrieving events by date: " + date, e);
+            throw e;
+        } finally {
+            // Close the cursor and database to free resources
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
+
+        Log.d("EventsRepository", "Total events retrieved: " + eventsList.size());
+
+        return eventsList;
+    }
+
+
 }

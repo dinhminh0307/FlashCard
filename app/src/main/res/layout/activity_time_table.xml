@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView"
+    android:id="@+id/verticalScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:importantForAccessibility="no"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".controller.TimeTableActivity">
+    tools:context=".controller.TimeTableActivity"
+    android:fillViewport="true"
+    android:scrollbars="vertical">
 
     <!-- Container for all views inside the ScrollView -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Horizontal LinearLayout containing ImageView and TextView -->
+        <!-- Header Section: Exit Button and Title -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,23 +47,27 @@
                 android:gravity="center_vertical" />
         </LinearLayout>
 
-        <!-- HorizontalScrollView containing the TableLayout -->
+        <!-- Timetable Section: Horizontal Scroll for TableLayout -->
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:importantForAccessibility="no"
-            android:layout_marginTop="16dp">
+            android:fillViewport="true"
+            android:scrollbars="horizontal">
 
-            <TableLayout
+
+        <TableLayout
                 android:id="@+id/tableLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:stretchColumns="*"
                 android:shrinkColumns="*"
-                android:padding="16dp" />
-        </HorizontalScrollView>
+                android:padding="0dp">
 
-    </LinearLayout>
 
-</ScrollView>
+            <!-- TableRows will be added dynamically via Java code -->
+        </TableLayout>
+    </HorizontalScrollView>
+
+</LinearLayout>
+    </ScrollView>
