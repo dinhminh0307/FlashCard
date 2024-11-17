@@ -1,7 +1,9 @@
 package com.example.flashcard;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +11,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.flashcard.controller.CardPageActivity;
 import com.example.flashcard.controller.ProfilePageActivity;
@@ -30,11 +35,13 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
 
     private ThreadTasks threadTasks;
 
+    private static final int REQUEST_POST_NOTIFICATIONS = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        requestNotificationPermission();
         flashCardServices = new FlashCardServices(this);
         flashCardServices.initDB();
         threadTasks = new ThreadTasks(this);
@@ -43,6 +50,47 @@ public class MainActivity extends AppCompatActivity implements OptionDialogFragm
         setupCategoryListeners();
         onProfileClicked();
         onScheduleClicked();
+    }
+
+    private void requestNotificationPermission() {
+        // Check if the device is running Android 13 or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Check if the POST_NOTIFICATIONS permission is already granted
+            if (ContextCompat.checkSelfPermission(this, "android.permission.POST_NOTIFICATIONS")
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // If permission is not granted, request it
+                ActivityCompat.requestPermissions(this,
+                        new String[]{"android.permission.POST_NOTIFICATIONS"},
+                        REQUEST_POST_NOTIFICATIONS);
+            } else {
+                // Permission already granted
+                Toast.makeText(this, "Notification permission granted.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            // Permission is automatically granted on older Android versions
+            Toast.makeText(this, "Notifications are enabled by default on your device.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_POST_NOTIFICATIONS) {
+            // If request is cancelled, the result arrays are empty
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted
+                Toast.makeText(this, "Notification permission granted.", Toast.LENGTH_SHORT).show();
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Notification permission denied.", Toast.LENGTH_SHORT).show();
+
+                // Optionally, inform the user why the permission is needed and prompt again or disable notifications
+                // For example:
+                // showPermissionDeniedDialog();
+            }
+        }
     }
 
     /**
