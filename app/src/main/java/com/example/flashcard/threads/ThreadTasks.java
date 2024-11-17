@@ -32,6 +32,31 @@ public class ThreadTasks {
     }
 
     /**
+     * Checks the time before an event and logs if the event is within 30 minutes.
+     *
+     * @param events List of events to check.
+     */
+    private void checkTimeBeforeEvent(List<Events> events) {
+        int hrs, mins = 0;
+        boolean isNoti = false;
+        for (Events event : events) {
+            // If the current date is 30 minutes before the schedule
+            for (String e_time : event.getTime()) {
+                hrs = dateUtils.getHourFromFormatedString(e_time);
+                mins = dateUtils.getMinsFromFormatedString(e_time);
+                if (currentDate.getHour() == hrs - 1 && Math.abs(mins - currentDate.getMins()) >= 30) {
+                    isNoti = true;
+                    Log.d("ThreadTasks", "About " + Math.abs(mins - currentDate.getMins()) + " min before the event");
+                    break;
+                }
+            }
+            if (isNoti) {
+                break;
+            }
+        }
+    }
+
+    /**
      * Starts a new thread to perform background tasks.
      */
     public void runThread() {
@@ -42,20 +67,17 @@ public class ThreadTasks {
                     try {
                         getCurrentDate();
 
-                        // Example usage of EventServices within the thread
                         String date = currentDate.getDayOfWeeks(); // Replace with dynamic date as needed
                         date = dateUtils.mapDay(date);
                         events = eventServices.getEventsByDateService(date);
-                        if(events.isEmpty()) {
-                            Log.d("ThreadTasks", "Current Date and Time: " + currentDate.getDayOfWeeks() + " " + currentDate.getTime());
+
+                        if (events.isEmpty()) {
+                            Log.d("ThreadTasks", "No events for Current Date and Time: " +
+                                    currentDate.getDayOfWeeks() + " " + currentDate.getTime());
                         }
-                        // Log the retrieved events
-                        for (Events event : events) {
-                            // if the current date before the schedule 30 min
-                            Log.d("ThreadTasks", "Event: " + event.getName() + ", Date: " + event.getDate() + ", Times: " + event.getTime());
-                        }
+                        checkTimeBeforeEvent(events);
+
                         Thread.sleep(2000); // Sleep for 2 seconds to simulate a delay
-                        // If you need to update the UI, consider using a Handler or other mechanisms
                     } catch (InterruptedException e) {
                         Log.e("ThreadTasks", "Thread was interrupted", e);
                         Thread.currentThread().interrupt(); // Restore the interrupted status
@@ -63,7 +85,6 @@ public class ThreadTasks {
                         Log.e("ThreadTasks", "Error during background task", e);
                     }
                 }
-
             }
         }).start();
     }
@@ -75,8 +96,6 @@ public class ThreadTasks {
      */
     private void getCurrentDate() throws InterruptedException {
         currentDate = dateUtils.getCurrentDateAndTime();
-        //Log.d("ThreadTasks", "Current Date and Time: " + currentDate.getDayOfWeeks() + " " + currentDate.getTime());
-
     }
-
 }
+

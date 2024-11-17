@@ -69,4 +69,14 @@ public class DateUtils {
         convertedDate.setMins(mins);
         return convertedDate;
     }
+
+    public int getHourFromFormatedString(String time) {
+        String[] timeParts = time.split(":");
+        return Integer.parseInt(timeParts[0]);
+    }
+
+    public int getMinsFromFormatedString(String time) {
+        String[] timeParts = time.split(":");
+        return Integer.parseInt(timeParts[1]);
+    }
 }
