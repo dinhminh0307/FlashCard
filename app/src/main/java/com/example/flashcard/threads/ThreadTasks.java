@@ -103,7 +103,7 @@ public class ThreadTasks {
 
                     // Sleep for 5 seconds (adjust as needed)
                     //Thread.sleep(1200000);
-                    Thread.sleep(5000);
+                 Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     Log.e("ThreadTasks", "Thread was interrupted", e);
                     Thread.currentThread().interrupt(); // Restore the interrupted status

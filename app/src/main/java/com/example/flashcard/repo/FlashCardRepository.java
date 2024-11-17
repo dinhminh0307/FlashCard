@@ -92,7 +92,7 @@ public class FlashCardRepository extends SQLiteOpenHelper {
 
 
     // Insert question and answer
-    public void insertQuestion(String tableName, FlashCard flashCard) throws DuplicateQuestionException {
+    public void insertQuestion(String tableName, FlashCard flashCard) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
 
